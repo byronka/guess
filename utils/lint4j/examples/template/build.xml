@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<project name="Lint4j" default="warning" basedir=".">
+	<property file="build.properties" />
+	<taskdef name="lint4j" classname="com.jutils.lint4j.ant.Lint4jAntTask">
+		<classpath>
+			<pathelement location="${lint4j.dist.dir}/jars/lint4j.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="warning">
+		<echo message="Make sure to edit build.properties before running any checks. The available targets can be listed by running ant -projecthelp" />
+	</target>
+
+	<target name="lint4j" description="Run Lint4j on your source">
+		<lint4j ignorePackages=""  packages="org.apache.*" level="${lint4j.level}" exact="${lint4j.exact}">
+			<sourcepath>
+				<dirset dir="${my.src.path}">
+					<include name="**/src/share" />
+					<include name="**/src/java" />
+					<exclude name="**/test*/**" />
+				</dirset>
+			</sourcepath>
+			<classpath>
+				<fileset dir="${my.src.path}">
+					<include name="**/*.jar" />
+					<include name="**/*.zip" />
+				</fileset>
+			</classpath>
+		</lint4j>
+	</target>
+</project>

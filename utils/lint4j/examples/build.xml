@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+
+<project name="Lint4j" default="warning" basedir=".">
+
+	<property file="build.properties" />
+	<taskdef name="lint4j" classname="com.jutils.lint4j.ant.Lint4jAntTask">
+		<classpath>
+			<pathelement location="${lint4j.dist.dir}/jars/lint4j.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="warning">
+		<echo message="Make sure to edit build.properties before running any checks. The available targets can be listed by running ant -projecthelp" />
+	</target>
+
+	<target name="all" depends="check-jdk1.4,check-tomcat5,check-jboss32,check-jboss4,check-adventure,check-ecperf,check-ticket,check-petstore" description="performs all checks" />
+
+	<target name="check-jdk1.4" description="Perform checks on the JDK 1.4 source">
+		<lint4j sourcepath="${jdk.src.path}" packages="java.*,sunw.*,javax.*,com.sun.*,org.*" exact="false" />
+	</target>
+
+	<target name="check-tomcat5" description="Perform checks on Tomcat 5">
+		<lint4j ignorePackages="org.apache.tomcat.util.net.puretls,org.apache.coyote.tomcat3,org.apache.ajp.tomcat33"  packages="org.apache.*" level="${lint4j.level}" exact="${lint4j.exact}">
+			<sourcepath>
+				<dirset dir="${tomcat5.src.path}">
+					<include name="**/src/share" />
+					<include name="**/src/java" />
+					<exclude name="**/test/**" />
+				</dirset>
+				<pathelement path="${tomcat5.src.path}/jakarta-tomcat-connectors/util/java" />
+				<pathelement path="${tomcat5.src.path}/jakarta-tomcat-connectors/naming/src" />
+				<pathelement path="${tomcat5.src.path}/jakarta-tomcat-connectors/util/loader" />
+			</sourcepath>
+			<classpath>
+				<fileset dir="/var/tmp/tomcat5-deps/">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<!--sourcefiles>
+				<fileset dir="${tomcat5.src.path}/jakarta-tomcat-connectors/naming/src">
+					<include name="**/*.java"/>
+				</fileset>
+			</sourcefiles-->
+		</lint4j>
+	</target>
+
+
+	<target name="check-jboss32" description="Perform checks on JBoss 3.2. Make sure to build all sources before running this check.">
+		<lint4j ignorePackages="org.jboss.test.*" packages="org.jboss.*" level="${lint4j.level}" exact="${lint4j.exact}">
+			<sourcepath>
+				<dirset dir="${jboss32.src.path}">
+					<include name="**/src/main" />
+					<include name="**/output/gen-src" />
+					<exclude name="**/testsuite/**" />
+				</dirset>
+			</sourcepath>
+			<classpath>
+				<fileset dir="${jboss32.src.path}/thirdparty">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</lint4j>
+	</target>
+
+	<target name="check-jboss4" description="Perform checks on JBoss 4. Make sure to build all sources before running this check.">
+		<lint4j ignorePackages="org.jboss.test.*" packages="org.jboss.*" level="${lint4j.level}" exact="${lint4j.exact}">
+			<sourcepath>
+				<dirset dir="${jboss4.src.path}">
+					<include name="**/src/main" />
+					<include name="**/output/gen-src" />
+					<exclude name="**/testsuite/**" />
+					<exclude name="**/aop/docs/examples/**"/>
+				</dirset>
+			</sourcepath>
+			<classpath>
+				<fileset dir="${jboss4.src.path}/thirdparty">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</lint4j>
+	</target>
+
+	<target name="check-adventure" description="Perform checks on Sun's Adventure Builder J2EE example">
+		<lint4j packages="com.sun.j2ee.*" level="${lint4j.level}" exact="${lint4j.exact}">
+			<sourcepath>
+				<dirset dir="${adventure.src.path}">
+					<include name="**/src/java" />
+				</dirset>
+			</sourcepath>
+			<classpath>
+				<fileset dir="${adventure.src.path}">
+					<include name="**/*.jar" />
+				</fileset>
+				<pathelement path="${servlet.jar.path}" />
+				<pathelement path="${ejb.jar.path}" />
+				<pathelement path="${jms.jar.path}" />
+				<pathelement path="${mail.jar.path}" />
+				<pathelement path="${jaxrpc.jar.path}" />
+			</classpath>
+		</lint4j>
+	</target>
+
+	<target name="check-ecperf" description="Perform checks on Sun's ECPerf benchmark">
+		<lint4j sourcepath="${ecperf.src.path}/src" classpath="${servlet.jar.path}:${ejb.jar.path}:${ecperf.src.path}/jars/xerces.jar" packages="com.sun.ecperf.*" level="${lint4j.level}" exact="${lint4j.exact}" />
+	</target>
+
+	<target name="check-ticket" description="Perform checks on Sun's Smart ticket J2ME example">
+		<lint4j packages="com.sun.j2me.*" level="${lint4j.level}" exact="${lint4j.exact}" >
+			<sourcepath>
+				<dirset dir="${ticket.src.path}">
+					<include name="**/src" />
+				</dirset>
+			</sourcepath>
+			<classpath>
+				<fileset dir="${adventure.src.path}">
+					<include name="**/*.jar" />
+				</fileset>
+				<pathelement path="${servlet.jar.path}" />
+				<pathelement path="${ejb.jar.path}" />
+				<pathelement path="${jms.jar.path}" />
+				<pathelement path="${mail.jar.path}" />
+			</classpath>
+		</lint4j>
+	</target>
+
+	<target name="check-petstore" description="Perform checks on Sun's Pet Store J2EE example">
+		<lint4j sourcepath="${petstore.src.path}/src/apps/admin/src/admin:${petstore.src.path}/src/apps/admin/src/client:${petstore.src.path}/src/apps/opc/src:${petstore.src.path}/src/apps/petstore/src:${petstore.src.path}/src/apps/supplier/src:${petstore.src.path}/src/components/address/src:${petstore.src.path}/src/components/asyncsender/src:${petstore.src.path}/src/components/cart/src:${petstore.src.path}/src/components/catalog/src:${petstore.src.path}/src/components/contactinfo/src:${petstore.src.path}/src/components/creditcard/src:${petstore.src.path}/src/components/customer/src:${petstore.src.path}/src/components/encodingfilter/src:${petstore.src.path}/src/components/lineitem/src:${petstore.src.path}/src/components/mailer/src:${petstore.src.path}/src/components/processmanager/src:${petstore.src.path}/src/components/purchaseorder/src:${petstore.src.path}/src/components/servicelocator/src:${petstore.src.path}/src/components/signon/src:${petstore.src.path}/src/components/supplierpo/src:${petstore.src.path}/src/components/uidgen/src:${petstore.src.path}/src/components/util/tracer/src:${petstore.src.path}/src/components/xmldocuments/src:${petstore.src.path}/src/waf/src/controller:${petstore.src.path}/src/waf/src/view/taglibs:${petstore.src.path}/src/waf/src/view/template/com" classpath="${petstore.src.path}/src/lib/base64/base64.jar:${jta.jar.path}:${servlet.jar.path}:${ejb.jar.path}:${jms.jar.path}:${activation.jar.path}:${mail.jar.path}" packages="com.sun.j2ee.*" level="${lint4j.level}" exact="${lint4j.exact}" />
+	</target>
+
+</project>

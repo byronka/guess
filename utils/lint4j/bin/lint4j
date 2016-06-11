@@ -1,0 +1,28 @@
+#!/bin/sh
+here="`dirname $0`/.."
+
+if [ $# -gt 0 ]; then 
+  option=$1
+  if [ $option = -J ] ; then
+    shift
+    vmoptions=$1
+    shift
+  fi
+fi
+
+
+if [ -z "$JAVA_HOME" ] ; then
+  JAVA=java
+else
+  JAVA="$JAVA_HOME/bin/java"
+fi
+
+case "`uname`" in
+  CYGWIN*)
+    JAVA_HOME="`cygpath --windows "$JAVA_HOME"`"
+    h="`cygpath --windows "$h"`"
+  ;;
+esac
+
+exec "$JAVA" $vmoptions -jar "$here/jars/lint4j.jar" $*
+
