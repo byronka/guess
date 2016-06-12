@@ -256,4 +256,9 @@ There is nothing in the requirements about the bounds for this number.
   "higher,", the computer should reply that 10,000 is the highest
   bound and maybe choose a different number.  Likewise, if the user
   says "lower" at 0, a similar message.
+
+  Unfotunately, there are going to be certain values, like 1, or 9999,
+  that will have a largest number of queries to obtain.  This will be
+  somewhat allayed by the fact we'll randomize the first guess to be
+  somewhere between 0 and 20, exclusive.
   
