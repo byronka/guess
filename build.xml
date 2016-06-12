@@ -25,7 +25,7 @@
 		<java 
       classpath="${build.dir}"
       classname="com.renomad.guess.Guess"
-      fork="true" >
+      fork="true" />
   </target>
 
 	<!-- ################ -->
