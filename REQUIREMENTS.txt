@@ -261,4 +261,43 @@ There is nothing in the requirements about the bounds for this number.
   that will have a largest number of queries to obtain.  This will be
   somewhat allayed by the fact we'll randomize the first guess to be
   somewhere between 0 and 20, exclusive.
+
+  Thinking about data structure / method signature
+  --------------------------------------------------
+  So far, we've been looking at a data structure that has three
+  components - the min, max, and direction of next guess.
+
+  Let's look at that data structure in action.
+  (min, max, direction)
   
+  user chooses 123: 
+     randomly choose number between 1 and 19
+  comp: 10? 
+  user: higher 
+     guessHigher (10, 20) -> 20
+  comp: 20? 
+  user: higher
+     guessHigher (20, 40) -> 40
+  comp: 40?
+  user: higher
+     guessHigher (40, 80) -> 80
+  comp: 80?
+  user: higher
+     guessHigher (80, 160) -> 160
+  comp: 160?
+  user: lower
+     guessLower (80, 160) -> 120
+  comp: 120?
+  user: higher
+     guessHigher (120, 160) -> 140
+  comp: 140?
+  user: lower
+     guessHigher (120, 140) -> 130
+  comp: 130?
+  user: lower
+     guessHigher (120, 130) -> 125
+  comp: 125?
+  user: lower
+     guessHigher (120, 125) -> 123
+  comp: 123?
+  user: yes

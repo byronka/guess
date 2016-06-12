@@ -33,4 +33,17 @@ public class Guess {
       System.out.println(s);
     }
   }
+
+  public static void parseInputAndTakeAction(String input) {
+   // to be implemented
+  }
+
+  public static void guessHigher(int min, int max) {
+   // to be implemented
+  }
+
+  public static void guessLower(int min, int max) {
+   // to be implemented
+  }
+
 }
