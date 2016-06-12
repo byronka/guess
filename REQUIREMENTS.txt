@@ -38,3 +38,16 @@ Please note:
      Maven or Gradle.
 4. Working unit tests would be a bonus.
 5. You can include any explanatory notes with your program.
+
+thoughts by Byron:
+------------------
+
+There is nothing in the requirements about the bounds for this number.
+  That would mean we could allow negative numbers, 0, floating point,
+  and very large numbers (12345678901234567890 for example). We are
+  *not* going to assume that kind of craziness is allowed.  If this
+  was a real client, I would put this and other questions into an
+  email for answer.  But that's not what I'm dealing with here - this
+  is a code sample, so I'm going to go with what makes sense.
+item 1 (least number of questions) would means we should
+halve the guess
