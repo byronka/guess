@@ -44,9 +44,10 @@ thoughts by Byron:
 
 There is nothing in the requirements about the bounds for this number.
   That would mean we could allow negative numbers, 0, floating point,
-  and very large numbers (12345678901234567890 for example). We are
-  *not* going to assume that kind of craziness is allowed.  If this
-  was a real client, I would put this and other questions into an
+  and very large numbers (12345678901234567890 for example). 
+  
+  We are *not* going to assume that kind of craziness is allowed.  If
+  this was a real client, I would put this and other questions into an
   email for answer.  But that's not what I'm dealing with here - this
   is a code sample, so I'm going to go with what makes sense.
 
@@ -87,10 +88,10 @@ There is nothing in the requirements about the bounds for this number.
    answer <= 2^7 * answer; 128*14680064=1879048192      =         ...                             = 2^28 * 7  (+7)
    answer <= 2^8 * answer; 256*1879048192=481036337152L =         ...                             = 2^36 * 7  (+8)
 
-   Basically, what we have here is that with each iteration, we're
-   augmenting the power by a series, 1, 2, 3, ...
+  Basically, what we have here is that with each iteration, we're
+  augmenting the power by a series, 1, 2, 3, ...
 
-   But we could do better.  We could augment by the Fibonacci series: 1, 2, 3, 5, 8, 13...
+  But we could do better.  We could augment by the Fibonacci series: 1, 2, 3, 5, 8, 13...
 
     = 2^0 * 7
     = 2^1 * 7   (+1)
@@ -101,10 +102,158 @@ There is nothing in the requirements about the bounds for this number.
     = 2^32 * 7  (+13)
     = 2^53 * 7  (+21)
 
-   Hmm, we overshot the mark a bit.  We were aiming for 2^38 or so,
-   and our acceleration is too high.  Maybe a simple unit increment
-   series is fine!
+  Hmm, we overshot the mark a bit.  We were aiming for 2^38 or so,
+  and our acceleration is too high.  Maybe a simple unit increment
+  series is fine! The key here is if the user is forced to keep
+  saying, "higher," because they choose a very large number, or a
+  rational number with a large denominator. Let's see about a way to
+  get there faster without overshooting.
 
-We *will* allow going into floating point, but only at the point where
-the user has been presented with what the computer is sure is the
-number, but they still say higher or lower.
+  One note: a user might, hilariously, choose their number to be
+  1234567890, or negative 12345.  But, we *do* have to choose some
+  realistic constraints, and I'm going to choose those to be the
+  bounds of a 32-bit computer, and Java's 2's complement. Yes, we need
+  to stay real-world, but I promise if I was playing this game, I'd
+  personally quickly start playing with larger numbers.
+
+  So:
+   High-bound int: (2^31)-1
+   Low-bound int: -(2^31)
+
+  Know what? Forget the floating-point, it's a sinkhole.  We're
+  going to keep this to integer.
+
+  Let's test our strategy with some common cases:
+
+  user chooses 16:
+  comp: 10?
+  user: higher
+  comp: 20?
+  user: lower
+  comp: 15
+  user: higher
+  comp: 18?
+  user: lower
+  comp: 17?
+  user: lower
+  comp: 16?
+  user: yes
+
+  user chooses 123:
+  comp: 23?
+  user: higher
+  comp: 46?
+  user: higher
+  comp: 184?
+  user: lower
+  comp: 92?
+  user: higher
+  comp: 138?
+  user: lower
+  comp: 115?
+  user: higher
+  comp: 126?
+  user: lower
+  comp: 121?
+  user: higher
+  comp: 123?
+  user: yes
+
+  user chooses 0:
+  comp: 15?
+  user: lower
+  comp: 0?
+  user: yes
+
+  user chooses -123:
+  comp: 17?
+  user: lower
+  comp: 0?
+  user: lower
+  comp: -34?
+  user: lower
+  comp: -119?
+  user: lower
+  comp: -1071?
+  user: higher
+  comp: -595?
+  user: higher
+  comp: -357?
+  user: higher
+  comp: -238?
+  user: higher
+  comp: -179
+  user: higher
+
+  Ok, two things are occuring to me at this point.  first off, do we
+  *really* want to allow for insanely high numbers, like 2^27? And
+  secondly, going negative just adds a lot of pain, little gain.
+
+  So, a revision of the requirements: integers between 0 and 10,000
+  and we'll keep the math simple - doubling and halving each time.
+
+  user chooses 123:
+  comp: 10?
+  user: higher
+  comp: 20?
+  user: higher
+  comp: 40?
+  user: higher
+  comp: 80?
+  user: higher
+  comp: 160?
+  user: lower
+  comp: 120?
+  user: higher
+  comp: 140?
+  user: lower
+  comp: 130?
+  user: lower
+  comp: 125?
+  user: lower
+  comp: 123?
+  user: yes
+
+  user chooses 0:
+  comp: 10?
+  user: lower
+  comp: 5?
+  user: lower
+  comp: 3?
+  user: lower
+  comp: 2?
+  user: lower
+  comp: 1?
+  user: lower
+  comp: 0?
+  user: yes
+
+  user chooses -1:
+  comp: please enter a value between 0 and 10,000)
+
+  Actually, this reminds me, let's remove commas from the number the
+  user enters before parsing it as an int.
+
+  user chooses 10000:
+  comp: 10?
+  user: higher
+  comp: 20?
+  user: higher
+  comp: 40?
+  user: higher
+  comp: 80?
+  user: higher
+  comp: 160?
+  user: higher
+  comp: 320?
+  user: higher
+  comp: 640?
+  user: higher
+  comp: 10000?
+  user: yes
+
+  This brings up another point.  If the user is at 10,000 and says
+  "higher,", the computer should reply that 10,000 is the highest
+  bound and maybe choose a different number.  Likewise, if the user
+  says "lower" at 0, a similar message.
+  
