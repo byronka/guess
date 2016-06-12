@@ -1,0 +1,181 @@
+<project name="Guess" default="usage" >
+
+   <!-- Source directory -->
+   <property name="src.dir" value="./src" />
+
+   <!-- Build directory -->
+   <property name="build.dir" value="./build" />
+
+    <!-- Javadocs -->
+    <property name="docs.dir" value="./docs" />
+
+    <!-- lint output -->
+    <property name="lint.output.dir" value="./lint" />
+
+
+
+  <!-- ##################### -->
+  <!--    COMBINED TARGETS   -->
+  <!-- ##################### -->
+  <!-- Targets that combine other targets for ease of use -->
+  <!--====================================================-->
+
+  <target name="run" depends="compile"
+    description="Runs the program, building if necessary">
+		<java 
+      classpath="${build.dir}"
+      classname="com.renomad.guess.Guess"
+      fork="true" >
+  </target>
+
+	<!-- ################ -->
+  <!--   COMPILATION    -->
+  <!-- ################ -->
+  <!-- compiling the java files into classes into the build directory -->
+  <!--================================================================-->
+
+  <!-- builds the Java classes necessary for the functioning of the
+  system.  All classes are built and put in the build directory, and
+  other Ant targets move these files to their intended destination -->
+  <target name="compile" description="compiles all business java files">
+    <mkdir dir="${build.dir}" />
+    <javac 
+      debug="true" 
+      debuglevel="lines,vars,source" 
+      includeantruntime="false" 
+      classpath="lib/junit-4.12.jar"
+      srcdir="${src.dir}" 
+      destdir="${build.dir}">
+      <compilerarg value="-Xlint:unchecked" /> <!-- for more warnings -->
+    </javac>
+  </target>
+
+  <!-- deletes the code used to build the schema. --> 
+  <target 
+    name="clean" 
+    description="deletes the bin directory which holds the compiled classes">
+		<delete dir="${build.dir}"/>
+  </target>
+
+  <!-- ############## -->
+  <!--     TESTING    -->
+  <!-- ############## -->
+	<!-- Scripts for testing-->
+  <!--====================================================-->
+
+    <!-- Run the JUnit Tests -->
+	<target name="test" depends="compile" description="runs the tests">
+		<junit printsummary="on" fork="true" haltonfailure="yes">
+		<classpath>
+      <pathelement path=" lib/junit-4.12.jar" />
+		</classpath>
+		<formatter type="plain" usefile="false"/>
+		<test name="com.renomad.guess.tests.GuessTests"/>
+	</junit>
+	</target>
+
+
+  <!-- ####################### -->
+  <!--     STATIC ANALYSIS     -->
+  <!-- ####################### -->
+  <!-- Scripts for running static code analysis on the codebase -->
+  <!--===========================================================-->
+
+  <!-- static code analysis -->
+    <property name="lint4j.dist.dir" value="./utils/lint4j-0.9.1" />
+    <property name="findbugs.dist.dir" value="./utils/findbugs-3.0.0" />
+
+  <target if="${dev.mode}" name="lint-all" description="runs all the lint programs" >
+		<antcall target="findbugs" />
+		<antcall target="lint4j" />
+	</target>
+
+	<target name="build-lint-output">
+		<mkdir dir="${lint.output.dir}"/>
+	</target>
+
+  <target name="findbugs" depends="build-lint-output">
+    <taskdef name="findbugs" 
+      classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+      <classpath>
+        <pathelement location="${findbugs.dist.dir}/lib/findbugs-ant.jar" />
+      </classpath>
+    </taskdef>
+    <findbugs home="${findbugs.dist.dir}"
+              output="html"
+              outputFile="${lint.output.dir}/findbugs_output.html" >
+      <sourcePath path="./src" />
+      <class location="${build.dir}" />
+    </findbugs>
+  </target>
+
+
+
+  <target name="lint4j" >
+    <taskdef 
+      name="lint4j" 
+      classname="com.jutils.lint4j.ant.Lint4jAntTask"  >
+      <classpath>
+        <pathelement location="${lint4j.dist.dir}/jars/lint4j.jar" />
+      </classpath>
+    </taskdef>
+		<lint4j 
+        level="5" 
+        packages="com.renomad.*" 
+        exact="false" >
+      <sourcepath>
+        <dirset dir="${src.dir}">
+          <include name="**"/>
+        </dirset>
+      </sourcepath>
+			<classpath>
+				<fileset dir="${build.dir}">
+					<include name="**" />
+				</fileset>
+				<pathelement location="${tomcat.lib.dir}servlet-api.jar" />
+			</classpath>
+      <formatters>
+				<formatter type="text" toFile="${lint.output.dir}/lint4j_output.txt"/>
+      </formatters>
+		</lint4j>
+	</target>
+
+
+  <!-- ############## -->
+  <!--     JAVADOC    -->
+  <!-- ############## -->
+	<!-- Scripts for building Javadocs -->
+  <!--====================================================-->
+
+	<!-- Creates Javadoc -->
+	<target name="docs" 
+    description="builds the javadocs">
+		<javadoc packagenames="com.renomad.guess" sourcepath="${src.dir}" destdir="${docs.dir}">
+			<!-- Define which files / directory should get included, we include all -->
+			<fileset dir="${src.dir}">
+				<include name="**" />
+			</fileset>
+		</javadoc>
+	</target>
+
+
+  <!-- ############## -->
+  <!--     UTILS      -->
+  <!-- ############## -->
+  <!-- Scripts for helping out with using Ant   -->
+  <!--====================================================-->
+
+  <target name="usage"> 
+    <echo message="  If this is your first time with the project, read"/> 
+    <echo message="  the README file and make sure you have the dependencies."/> 
+    <echo message="  Then, to run the game, type:"/> 
+    <echo message="     ant run"/> 
+    <echo message=""/> 
+    <echo message="  Execute 'ant -p' for build file help."/> 
+  </target> 
+
+  <target name="debug" description="see all properties configured">
+    <echoproperties/>
+  </target>
+
+</project>
