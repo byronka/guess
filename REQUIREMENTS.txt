@@ -49,5 +49,62 @@ There is nothing in the requirements about the bounds for this number.
   was a real client, I would put this and other questions into an
   email for answer.  But that's not what I'm dealing with here - this
   is a code sample, so I'm going to go with what makes sense.
-item 1 (least number of questions) would means we should
-halve the guess
+
+  .. hmm wait a second.  
+  
+  Maybe we can just double and halve and it will still work out.  For
+  example, if the user chooses 1234567890, then the game will go like
+  this:
+  comp:(choosing a random number between 0 and 100) 20?
+  user: higher!
+  comp: 40?
+  user: higher!
+  comp: 80?
+  user: higher!
+  comp: 160?
+  user: higher?
+  ...
+  and so on... 320, 640, 1280, 
+
+  but that would take too long!  It would take maybe 27 queries
+  (similar to 2^27) before we hit a number like 1234567890!!  Maybe if
+  they keep saying, "higher", we'll speed up.
+  comp: 20?
+  user: higher!
+  comp: (2x) 40?  (4x) 160? (8x) 1280? (16x) 20,480? (32x) 655,360?
+  (64x) 41,943,040? (128x) 5,368,709,120?
+
+  This only takes 7 tries, that's better! Now, we're doing something
+  like this:
+
+   answer <= 7           ; 7                            = 7 (start with a prime, as example)      = 2^0 * 7
+   answer <= 2^1 * answer; 14                           = 2^1 * 7                                 = 2^1 * 7   (+1)
+   answer <= 2^2 * answer; 56                           = 2^2 * 2^1 * 7                           = 2^3 * 7   (+2)
+   answer <= 2^3 * answer; 8*56=448                     = 2^3 * 2^2 * 2^1 * 7                     = 2^6 * 7   (+3)
+   answer <= 2^4 * answer; 16*448=7168                  = 2^4 * 2^3 * 2^2 * 2^1 * 7               = 2^10 * 7  (+4)
+   answer <= 2^5 * answer; 32*7168=229376               = 2^5 * 2^4 * 2^3 * 2^2 * 2^1 * 7         = 2^15 * 7  (+5)
+   answer <= 2^6 * answer; 64*229376=14680064           = 2^6 * 2^5 * 2^4 * 2^3 * 2^2 * 2^1 * 7   = 2^21 * 7  (+6)
+   answer <= 2^7 * answer; 128*14680064=1879048192      =         ...                             = 2^28 * 7  (+7)
+   answer <= 2^8 * answer; 256*1879048192=481036337152L =         ...                             = 2^36 * 7  (+8)
+
+   Basically, what we have here is that with each iteration, we're
+   augmenting the power by a series, 1, 2, 3, ...
+
+   But we could do better.  We could augment by the Fibonacci series: 1, 2, 3, 5, 8, 13...
+
+    = 2^0 * 7
+    = 2^1 * 7   (+1)
+    = 2^3 * 7   (+2)
+    = 2^6 * 7   (+3)
+    = 2^11 * 7  (+5)
+    = 2^19 * 7  (+8)
+    = 2^32 * 7  (+13)
+    = 2^53 * 7  (+21)
+
+   Hmm, we overshot the mark a bit.  We were aiming for 2^38 or so,
+   and our acceleration is too high.  Maybe a simple unit increment
+   series is fine!
+
+We *will* allow going into floating point, but only at the point where
+the user has been presented with what the computer is sure is the
+number, but they still say higher or lower.
