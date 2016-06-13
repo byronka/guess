@@ -1,4 +1,4 @@
-package com.renomad.guess.Guess;
+package com.renomad.guess;
 
 import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Guess {
 
-  public static void main() {
+  public static void main(String[] args) {
     System.out.println("hello");
 
   }
