@@ -7,7 +7,7 @@
    <property name="build.dir" value="./build" />
 
     <!-- Javadocs -->
-    <property name="docs.dir" value="./docs" />
+    <property name="javadocs.dir" value="./javadocs" />
 
     <!-- lint output -->
     <property name="lint.output.dir" value="./lint" />
@@ -53,8 +53,9 @@
   <!-- deletes the code used to build the schema. --> 
   <target 
     name="clean" 
-    description="deletes the bin directory which holds the compiled classes">
+    description="deletes the build and javadocs.directory">
 		<delete dir="${build.dir}"/>
+		<delete dir="${javadocs.dir}"/>
   </target>
 
   <!-- ############## -->
@@ -150,7 +151,7 @@
 	<!-- Creates Javadoc -->
 	<target name="docs" 
     description="builds the javadocs">
-		<javadoc packagenames="com.renomad.guess" sourcepath="${src.dir}" destdir="${docs.dir}">
+		<javadoc packagenames="com.renomad.guess" sourcepath="${src.dir}" destdir="${javadocs.dir}">
 			<!-- Define which files / directory should get included, we include all -->
 			<fileset dir="${src.dir}">
 				<include name="**" />
