@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,18 @@ public class Guess {
   public static void main(String[] args) {
     System.out.println("hello");
 		readAndDisplayFile("./resources/banner.txt");
+		System.out.println("Would you like instructions? (yes or no)");
+		System.out.print(" > ");
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			String s = br.readLine().toLowerCase();
+			if (s.equals("y") || s.equals("yes")) {
+        readAndDisplayFile("./resources/instructions.txt");
+			}
+		} catch (IOException ex) {
+		  System.out.println("error reading line");
+		}
+	
 
   }
 
