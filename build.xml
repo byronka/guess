@@ -56,6 +56,7 @@
     description="deletes the build and javadocs.directory">
 		<delete dir="${build.dir}"/>
 		<delete dir="${javadocs.dir}"/>
+		<delete dir="${lint.output.dir}"/>
   </target>
 
   <!-- ############## -->
@@ -83,12 +84,10 @@
   <!--===========================================================-->
 
   <!-- static code analysis -->
-    <property name="lint4j.dist.dir" value="./utils/lint4j-0.9.1" />
-    <property name="findbugs.dist.dir" value="./utils/findbugs-3.0.0" />
+    <property name="findbugs.dist.dir" value="./utils/findbugs" />
 
-  <target if="${dev.mode}" name="lint-all" description="runs all the lint programs" >
+  <target name="lint-all" description="runs all the lint programs" >
 		<antcall target="findbugs" />
-		<antcall target="lint4j" />
 	</target>
 
 	<target name="build-lint-output">
@@ -109,37 +108,6 @@
       <class location="${build.dir}" />
     </findbugs>
   </target>
-
-
-
-  <target name="lint4j" >
-    <taskdef 
-      name="lint4j" 
-      classname="com.jutils.lint4j.ant.Lint4jAntTask"  >
-      <classpath>
-        <pathelement location="${lint4j.dist.dir}/jars/lint4j.jar" />
-      </classpath>
-    </taskdef>
-		<lint4j 
-        level="5" 
-        packages="com.renomad.*" 
-        exact="false" >
-      <sourcepath>
-        <dirset dir="${src.dir}">
-          <include name="**"/>
-        </dirset>
-      </sourcepath>
-			<classpath>
-				<fileset dir="${build.dir}">
-					<include name="**" />
-				</fileset>
-				<pathelement location="${tomcat.lib.dir}servlet-api.jar" />
-			</classpath>
-      <formatters>
-				<formatter type="text" toFile="${lint.output.dir}/lint4j_output.txt"/>
-      </formatters>
-		</lint4j>
-	</target>
 
 
   <!-- ############## -->
@@ -167,9 +135,8 @@
   <!--====================================================-->
 
   <target name="usage"> 
-    <echo message="  If this is your first time with the project, read"/> 
-    <echo message="  the README file and make sure you have the dependencies."/> 
-    <echo message="  Then, to run the game, type:"/> 
+    <echo message="To get started, read the README file."/> 
+    <echo message="To run the game, type:"/> 
     <echo message="     ant run"/> 
     <echo message=""/> 
     <echo message="  Execute 'ant -p' for build file help."/> 
