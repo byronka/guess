@@ -11,6 +11,7 @@ public class Guess {
 
   public static void main(String[] args) {
     System.out.println("hello");
+		readAndDisplayFile("./resources/banner.txt");
 
   }
 
