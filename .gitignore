@@ -1,3 +1,4 @@
 #some directories we shouldn't store in git.
 build
 javadocs
+lint
