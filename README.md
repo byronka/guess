@@ -8,13 +8,17 @@
 ******************************************************
 ******************************************************
 
-to run the game, type:
+to build the game, type:
 
-  ant run
+  ant compile
 
+After building, run the game by typing:
+
+  ./run
 
 to run tests:
 
   ant test
 
 Note: This program was written using OpenJDK 8, and Ant 1.9.4
+      It was built and tested on FreeBSD 10.2

@@ -1,0 +1,21 @@
+{
+if [ ! -f ./build/com/renomad/guess/Guess.class ]; then
+
+    echo
+    echo "   _____                       _  "
+    echo "  / ____|                     | | "
+    echo " | (___   ___  _ __ _ __ _   _| | "
+    echo "  \___ \ / _ \| '__| '__| | | | | "
+    echo "  ____) | (_) | |  | |  | |_| |_| "
+    echo " |_____/ \___/|_|  |_|   \__, (_) "
+    echo "                          __/ |   "
+    echo "                         |___/    "
+    echo "File not found! Try typing"
+    echo
+    echo "   ant compile"
+    echo
+    echo "then try again!"
+    exit 0
+fi
+}
+java -cp build com.renomad.guess.Guess

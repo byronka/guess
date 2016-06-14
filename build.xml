@@ -13,21 +13,6 @@
     <property name="lint.output.dir" value="./lint" />
 
 
-
-  <!-- ##################### -->
-  <!--    COMBINED TARGETS   -->
-  <!-- ##################### -->
-  <!-- Targets that combine other targets for ease of use -->
-  <!--====================================================-->
-
-  <target name="run" depends="compile"
-    description="Runs the program, building if necessary">
-		<java 
-      classpath="${build.dir}"
-      classname="com.renomad.guess.Guess"
-      fork="true" />
-  </target>
-
 	<!-- ################ -->
   <!--   COMPILATION    -->
   <!-- ################ -->
@@ -50,7 +35,6 @@
     </javac>
   </target>
 
-  <!-- deletes the code used to build the schema. --> 
   <target 
     name="clean" 
     description="deletes the build and javadocs.directory">
@@ -136,9 +120,10 @@
 
   <target name="usage"> 
     <echo message="To get started, read the README file."/> 
-    <echo message="To run the game, type:"/> 
-    <echo message="     ant run"/> 
+    <echo message="To build the game, type:"/> 
+    <echo message="     ant compile"/> 
     <echo message=""/> 
+    <echo message="  then type ./run to run the program."/> 
     <echo message="  Execute 'ant -p' for build file help."/> 
   </target> 
 
