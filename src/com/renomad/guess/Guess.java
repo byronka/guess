@@ -93,6 +93,9 @@ public class Guess {
   }
 
 
+  /**
+    * The various user actions available
+    */
   public enum ActionEnum {
     EMPTY,  // the user entered nothing.
     READY,
@@ -102,6 +105,7 @@ public class Guess {
     HIGHER,
     LOWER,
     BAD_INPUT, // the user entered something unparseable
+    OOPS  // if ther user wants to undo their previous entry
   } 
 
 
@@ -111,44 +115,51 @@ public class Guess {
     * what they intended.
     */
   public static ActionEnum readInputFromUser() {
-      System.out.print(" > ");
-      String s = "";
+    System.out.print(" > ");
+    String s = "";
 
-      try {
-        BufferedReader br = 
-          new BufferedReader(new InputStreamReader(System.in));
-        s = br.readLine().toLowerCase().trim();
-      } catch (IOException ex) {
-        System.out.println("error reading line");
-      }
+    try {
+      BufferedReader br = 
+        new BufferedReader(new InputStreamReader(System.in));
+      s = br.readLine().toLowerCase().trim();
+    } catch (IOException ex) {
+      System.out.println("error reading line");
+    }
+    return analyzeInput(s);
+  }
 
-      switch (s) {
-        case "y":
-        case "yes":
-          return ActionEnum.YES;
-        case "":
-          return ActionEnum.EMPTY;
-        case "higher":
-        case "h":
-        case "hi":
-          return ActionEnum.HIGHER;
-        case "lower":
-        case "l":
-        case "low":
-          return ActionEnum.HIGHER;
-        case "end":
-        case "e":
-          return ActionEnum.END;
-        case "i":
-        case "instructions":
-        case "help":
-        case "?":
-          return ActionEnum.HELP;
-        case "r":
-        case "ready":
-          return ActionEnum.READY;
-      }
-      return ActionEnum.BAD_INPUT;
+
+  /**
+    * simply analyzes the string for which token it relates to
+    */
+  public static ActionEnum analyzeInput(String s) {
+    switch (s) {
+      case "y":
+      case "yes":
+        return ActionEnum.YES;
+      case "":
+        return ActionEnum.EMPTY;
+      case "higher":
+      case "h":
+      case "hi":
+        return ActionEnum.HIGHER;
+      case "lower":
+      case "l":
+      case "low":
+        return ActionEnum.HIGHER;
+      case "end":
+      case "e":
+        return ActionEnum.END;
+      case "i":
+      case "instructions":
+      case "help":
+      case "?":
+        return ActionEnum.HELP;
+      case "r":
+      case "ready":
+        return ActionEnum.READY;
+    }
+    return ActionEnum.BAD_INPUT;
   }
 
 
