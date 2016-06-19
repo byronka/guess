@@ -24,30 +24,64 @@ public class Guess {
     }
 
     // at this point, we're off to the races!
-    GuessLoop(currentGuess, 0, 0);
+    guessLoop(currentGuess, 0, 0);
 
   }
 
 
-  public static void GuessLoop(int currentGuess, int min, int max) {
-    System.out.printf("is it %d?\n", currentGuess);
+  public static void guessLoop( int currentGuess, int min, int max) {
+    System.out.printf("is it %d?\n", nextGuess);
     ActionEnum token = readInputFromUser();
+    if (handleNonCalcs(token) {
+      guessLoop(currentGuess, min, max);
+    }
+    doGuess(currentGuess, min, max);
+  }
+
+
+  /**
+    * where the rubber hits the road for the calculation, 
+    * The algorithm goes like this:
+    * if we are given a max that is 0, it means the user told us
+    * to guess higher, and we're doubling each time.
+    * 
+    * If the max is greater than 0, it means we're out of the doubling
+    * phase, and we're calculating midpoints.
+    */
+  public static int doGuess(int currentGuess, int min, int max) {
+    if (max == 0) {
+      guessLoop(currentGuess * 2, currentGuess * 2, 0);
+    } else if (currentGuess == max) {
+      guessLoop(Math.abs(min-max)/2, Math.abs(min-max)/2, currentGuess);
+    } else {
+      guessLoop(Math.abs(min-max)/2, currentGuess, Math.abs(min-max)/2);
+    }
+        case HIGHER:
+          guessLoop(currentGuess * 2, min, currentGuess * 2);
+          break;
+        case LOWER:
+          guessLoop(Math.abs(min-max)/2, min, Math.abs(min-max)/2);
+          break;
+        case OOPS:
+          //TODO
+          guessLoop(currentGuess, min, max);
+          break;
+      }
+      guessLoop(currentGuess, min, max);
+  }
+
+
+  /**
+    * Handle the things that don't do calculations
+    * @return if true, loop without performing calcs
+    */
+  public static boolean handleNonCalcs(string token) {
       switch (token) {
         case HELP:
           readAndDisplayFile("./resources/instructions.txt");
           break;
         case EMPTY:
           displayShortHelpInGame();
-          break;
-        case HIGHER:
-          GuessLoop(currentGuess * 2, min, currentGuess * 2);
-          break;
-        case LOWER:
-          GuessLoop(Math.abs(min-max)/2, min, Math.abs(min-max)/2);
-          break;
-        case OOPS:
-          //TODO
-          GuessLoop(currentGuess, min, max);
           break;
         case YES:
           System.out.println("Fantastic!");
@@ -58,12 +92,8 @@ public class Guess {
         default:
           System.out.println("invalid input");
       }
-      GuessLoop(currentGuess, min, max);
   }
 
-  public static Blah CrunchBrunch(Blah bah) {
-
-  }
 
   /**
     * The data needed for the loop
