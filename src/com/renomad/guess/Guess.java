@@ -17,6 +17,8 @@ public class Guess {
 		readAndDisplayFile("./resources/banner.txt");
     boolean isGuessing = false;
     int currentGuess = ThreadLocalRandom.current().nextInt(1, 20 + 1);
+    int previousGuess = currentGuess;
+    // continuous loop until the user says "yes" or "end"
     while (true) {
       if (isGuessing) {
         System.out.printf("is it %d?\n", currentGuess);
@@ -26,8 +28,9 @@ public class Guess {
 
       if (isGuessing) {
         takeActionForTokenWhileGuessing(token, currentGuess, currentRange);
+      } else {
+        isGuessing = takeActionForToken(token, isGuessing);
       }
-      isGuessing = takeActionForToken(token, isGuessing);
     }
   }
 
@@ -51,10 +54,10 @@ public class Guess {
           displayShortHelp(isGuessing);
           break;
         case HIGHER:
-          return guessHigher(min, max);
+          return median(min, max);
           break;
         case LOWER:
-          return guessLower(min, max);
+          return median(min, max);
           break;
         case YES:
           break;
