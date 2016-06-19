@@ -326,6 +326,50 @@ There is nothing in the requirements about the bounds for this number.
   user: higher
   comp: 320?
   user: oops
-  comp: ok, I'm back at guessing 160?
+  comp: ok, I'm back at guessing: 160?
   user: lower
   ...
+
+
+  Revised:
+  user chooses 123: 
+     randomly choose number between 1 and 19
+  comp: 10? 
+  user: higher 
+     double(10) --> 20
+     -- this is where the algorithm is in scaling up mode.  It will double each time they say higher.
+     -- guessHigher doubles the value
+  comp: 20? 
+  user: higher
+     double (20) -> 40
+  comp: 40?
+  user: higher
+     double (40) -> 80
+  comp: 80?
+  user: higher
+     double (80) -> 160
+     -- guessHigher doubles the value
+  comp: 160?
+  user: lower
+     midpoint (80, 160) -> 120
+     -- this is where the algorithm switches to staying within bounds.
+     -- guessLower gives midpoint between current guess (160) as upper bound and previous guess (80) as lower bound
+  comp: 120?
+  user: higher
+     midpoint (120, 160) -> 140
+     -- guessHigher gives midpoint between current guess (120) as lower bound and previous upper bound (160) as upper bound
+  comp: 140?
+  user: lower
+     midpoint (120, 140) -> 130
+     -- guessLower gives midpoint between currentGuess (140) as upper bound and previous lower bound (120) as lower bound
+  comp: 130?
+  user: lower
+     midpoint (120, 130) -> 125
+     -- guessLower gives midpoint between current guess (130) as upper bound and previous lower bound (120) as lower bound
+  comp: 125?
+  user: lower
+     midpoint (120, 125) -> 123
+     -- guessLower gives midpoint between current guess (125) as upper bound and previous lower bound as lower bound (120)
+  comp: 123?
+  user: yes
+
