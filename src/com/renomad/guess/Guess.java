@@ -35,16 +35,18 @@ public class Guess {
       switch (token) {
         case HELP:
           readAndDisplayFile("./resources/instructions.txt");
-          GuessLoop(currentGuess, min, max);
           break;
         case EMPTY:
           displayShortHelpInGame();
-          GuessLoop(currentGuess, min, max);
           break;
         case HIGHER:
-          GuessLoop(currentGuess, min, max);
+          GuessLoop(currentGuess * 2, min, currentGuess * 2);
           break;
         case LOWER:
+          GuessLoop(Math.abs(min-max)/2, min, Math.abs(min-max)/2);
+          break;
+        case OOPS:
+          //TODO
           GuessLoop(currentGuess, min, max);
           break;
         case YES:
@@ -56,7 +58,28 @@ public class Guess {
         default:
           System.out.println("invalid input");
       }
+      GuessLoop(currentGuess, min, max);
   }
+
+  public static Blah CrunchBrunch(Blah bah) {
+
+  }
+
+  /**
+    * The data needed for the loop
+    */
+  private class CalcData {
+    public Blah(int current, int min, int max) {
+      this.current = current;
+      this.min = min;
+      this.max = max;
+    }
+
+    public final int current;
+    public final int min;
+    public final int max;
+  }
+
 
 
   /**
@@ -160,7 +183,7 @@ public class Guess {
   }
 
   public static void displayShortHelpInGame() {
-    System.out.println("(higher, lower, yes, end, ? for help)");
+    System.out.println("(higher, lower, yes, end, oops, ? for help)");
   }
 
 

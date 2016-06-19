@@ -373,3 +373,59 @@ There is nothing in the requirements about the bounds for this number.
   comp: 123?
   user: yes
 
+
+  I would like to do this without needing two methods, and without having
+  to hold state about which mode I'm in - climbing, or midpoints. Hmm...
+  
+  Revised yet again:
+  (user chooses 123)
+  (computer randomly choose number between 1 and 19)
+  comp: 10? 
+  user: higher 
+     guessLoop(10,20,20) --> 20
+     -- this is where the algorithm is in scaling up mode.  It will double each time they say higher.
+     -- guessHigher doubles the value
+  comp: 20? 
+  user: higher
+     guessLoop(20, 40, 40) -> 40
+  comp: 40?
+  user: higher
+     guessLoop (40, 80, 80) -> 80
+  comp: 80?
+  user: higher
+     guessLoop (80, 160, 160) -> 160
+     -- guessHigher doubles the value
+  comp: 160?
+  user: lower
+     guessLoop (160, 80, 160) -> 120
+     -- this is where the algorithm switches to staying within bounds.
+     -- guessLower gives midpoint between current guess (160) as upper bound and previous guess (80) as lower bound
+  comp: 120?
+  user: higher
+     guessLoop (120, 120, 160) -> 140
+     -- guessHigher gives midpoint between current guess (120) as lower bound and previous upper bound (160) as upper bound
+  comp: 140?
+  user: lower
+     guessLoop (140, 120, 140) -> 130
+     -- guessLower gives midpoint between currentGuess (140) as upper bound and previous lower bound (120) as lower bound
+  comp: 130?
+  user: lower
+     guessLoop (130, 120, 130) -> 125
+     -- guessLower gives midpoint between current guess (130) as upper bound and previous lower bound (120) as lower bound
+  comp: 125?
+  user: higher
+     guessLoop (125, 125, 130) -> 128
+     -- but this is an oops!
+  comp: 128?
+  user: oops (maybe easiest to simply store the latest somewhere, as we go.)
+     guessLoop (130, 120, 130) -> 125
+  comp: 125?
+
+
+
+  user: lower
+     guessLoop (125, 120, 125) -> 123
+     -- guessLower gives midpoint between current guess (125) as upper bound and previous lower bound as lower bound (120)
+  comp: 123?
+  user: yes
+  

@@ -21,3 +21,6 @@ If you wish to end before the computer has guessed your number, type
 "end" at the prompt, then press enter.
 
  > end
+
+If you enter "higher" or "lower" incorrectly, just type "oops" and it
+will give you the previous query.
