@@ -275,6 +275,7 @@ There is nothing in the requirements about the bounds for this number.
   comp: 10? 
   user: higher 
      guessHigher (10, 20) -> 20
+     -- guessHigher doubles the value
   comp: 20? 
   user: higher
      guessHigher (20, 40) -> 40
@@ -287,17 +288,28 @@ There is nothing in the requirements about the bounds for this number.
   comp: 160?
   user: lower
      guessLower (80, 160) -> 120
+     -- guessLower gives midpoint between current guess (160) as upper bound and previous guess (80) as lower bound
   comp: 120?
   user: higher
      guessHigher (120, 160) -> 140
+     -- guessHigher gives midpoint between current guess (120) as lower bound and previous guess (160) as upper bound
   comp: 140?
   user: lower
-     guessHigher (120, 140) -> 130
+     guessLower (120, 140) -> 130
+     -- guessLower gives midpoint between currentGuess (140) as upper bound and previous lower bound (120) as lower bound
   comp: 130?
   user: lower
-     guessHigher (120, 130) -> 125
+     guessLower (120, 130) -> 125
+     -- guessLower gives midpoint between current guess (130) as upper bound and previous lower bound (120) as lower bound
   comp: 125?
   user: lower
-     guessHigher (120, 125) -> 123
+     guessLower (120, 125) -> 123
+     -- guessLower gives midpoint between current guess (125) as upper bound and previous lower bound as lower bound (120)
   comp: 123?
   user: yes
+
+  This brings up a point.  What is the user says "higher" 
+  or "lower" when they meant the opposite? We need an "oops",
+  to bring them back a step. Otherwise, they'll find themselves
+  in the situation where the computer goes into the mode of narrowing
+  down to a value in the wrong range.

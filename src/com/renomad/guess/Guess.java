@@ -21,9 +21,18 @@ public class Guess {
       if (isGuessing) {
         System.out.printf("is it %d?\n", currentGuess);
       }
+
       ActionEnum token = readInputFromUser();
+
+      if (isGuessing) {
+        takeActionForTokenWhileGuessing(token, currentGuess, currentRange);
+      }
       isGuessing = takeActionForToken(token, isGuessing);
     }
+  }
+
+  private static class CurrentRange {
+    
   }
 
 
