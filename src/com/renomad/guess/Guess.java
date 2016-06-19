@@ -24,48 +24,39 @@ public class Guess {
     }
 
     // at this point, we're off to the races!
-    GuessLoop(0, currentGuess);
+    GuessLoop(currentGuess, 0, 0);
 
   }
 
 
-  public static void GuessLoop(int min, int max) {
+  public static void GuessLoop(int currentGuess, int min, int max) {
     System.out.printf("is it %d?\n", currentGuess);
     ActionEnum token = readInputFromUser();
-    takeActionForTokenWhileGuessing(token, currentGuess, currentRange);
-  }
-
-
-  /**
-    * takes action for what the user wants to do.
-    * @param min the minimum in the range of the computer's guess
-    * @param max the maximum in the range of the computer's guess
-    * @return the computer's guess.
-    */
-  public static int takeActionForTokenWhileGuessing(ActionEnum token, int min, int max) {
       switch (token) {
         case HELP:
           readAndDisplayFile("./resources/instructions.txt");
+          GuessLoop(currentGuess, min, max);
           break;
         case EMPTY:
-          displayShortHelp(isGuessing);
+          displayShortHelpInGame();
+          GuessLoop(currentGuess, min, max);
           break;
         case HIGHER:
-          return median(min, max);
+          GuessLoop(currentGuess, min, max);
           break;
         case LOWER:
-          return median(min, max);
+          GuessLoop(currentGuess, min, max);
           break;
         case YES:
-          break;
+          System.out.println("Fantastic!");
         case END:
           System.out.println("Game over");
           System.exit(0);
           break;
         default:
-          return isGuessing;
+          System.out.println("invalid input");
       }
-    }
+  }
 
 
   /**
@@ -81,7 +72,7 @@ public class Guess {
         readAndDisplayFile("./resources/instructions.txt");
         break;
       case EMPTY:
-        displayShortHelp(isGuessing);
+        displayShortHelpOutOfGame();
         break;
       case END:
         System.out.println("Game over");
@@ -90,6 +81,7 @@ public class Guess {
       default:
         return false;
     }
+    return false;  // the default - they have to enter "ready" to move into game mode
   }
 
 
@@ -163,12 +155,12 @@ public class Guess {
   }
 
 
-  public static void displayShortHelp(boolean isGuessing) {
-    if (isGuessing) {
-      System.out.println("(higher, lower, yes, end, ? for help)");
-    } else {
-      System.out.println("(end, ready, ? for help)");
-    }
+  public static void displayShortHelpOutOfGame() {
+    System.out.println("(end, ready, ? for help)");
+  }
+
+  public static void displayShortHelpInGame() {
+    System.out.println("(higher, lower, yes, end, ? for help)");
   }
 
 
