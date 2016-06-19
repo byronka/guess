@@ -275,6 +275,7 @@ There is nothing in the requirements about the bounds for this number.
   comp: 10? 
   user: higher 
      guessHigher (10, 20) -> 20
+     -- this is where the algorithm is in scaling up mode.  It will double each time they say higher.
      -- guessHigher doubles the value
   comp: 20? 
   user: higher
@@ -285,14 +286,16 @@ There is nothing in the requirements about the bounds for this number.
   comp: 80?
   user: higher
      guessHigher (80, 160) -> 160
+     -- guessHigher doubles the value
   comp: 160?
   user: lower
      guessLower (80, 160) -> 120
+     -- this is where the algorithm switches to staying within bounds.
      -- guessLower gives midpoint between current guess (160) as upper bound and previous guess (80) as lower bound
   comp: 120?
   user: higher
      guessHigher (120, 160) -> 140
-     -- guessHigher gives midpoint between current guess (120) as lower bound and previous guess (160) as upper bound
+     -- guessHigher gives midpoint between current guess (120) as lower bound and previous upper bound (160) as upper bound
   comp: 140?
   user: lower
      guessLower (120, 140) -> 130
