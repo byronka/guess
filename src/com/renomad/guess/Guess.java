@@ -15,27 +15,24 @@ public class Guess {
 
   public static void main(String[] args) {
 		readAndDisplayFile("./resources/banner.txt");
-    boolean isGuessing = false;
     int currentGuess = ThreadLocalRandom.current().nextInt(1, 20 + 1);
-    int previousGuess = currentGuess;
-    // continuous loop until the user says "yes" or "end"
+
     while (true) {
-      if (isGuessing) {
-        System.out.printf("is it %d?\n", currentGuess);
-      }
-
       ActionEnum token = readInputFromUser();
-
-      if (isGuessing) {
-        takeActionForTokenWhileGuessing(token, currentGuess, currentRange);
-      } else {
-        isGuessing = takeActionForToken(token, isGuessing);
-      }
+      boolean startGame = takeActionForTokenBeforeGuessing(token);
+      if (startGame) break;
     }
+
+    // at this point, we're off to the races!
+    GuessLoop(0, currentGuess);
+
   }
 
-  private static class CurrentRange {
-    
+
+  public static void GuessLoop(int min, int max) {
+    System.out.printf("is it %d?\n", currentGuess);
+    ActionEnum token = readInputFromUser();
+    takeActionForTokenWhileGuessing(token, currentGuess, currentRange);
   }
 
 
@@ -70,7 +67,13 @@ public class Guess {
       }
     }
 
-  public static boolean takeActionForTokenBeforeGuessing(ActionEnum token, boolean isGuessing) {
+
+  /**
+    * parses the user input before they start the game. 
+    * @param a token for what action to take
+    * @return whether to start the game
+    */
+  public static boolean takeActionForTokenBeforeGuessing(ActionEnum token) {
     switch (token) {
       case READY:
         return true;
@@ -85,7 +88,7 @@ public class Guess {
         System.exit(0);
         break;
       default:
-        return isGuessing;
+        return false;
     }
   }
 
@@ -177,16 +180,5 @@ public class Guess {
       System.out.println(s);
     }
   }
-
-
-  public static void guessHigher(int min, int max) {
-   // to be implemented
-  }
-
-
-  public static void guessLower(int min, int max) {
-   // to be implemented
-  }
-
 
 }
