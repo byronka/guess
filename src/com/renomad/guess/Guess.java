@@ -13,6 +13,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Guess {
 
 
+  //Used for storing the last data, so we can undo
+  public static CalcData lastData = null;
+
   public static void main(String[] args) {
 		readAndDisplayFile("./resources/banner.txt");
     int currentGuess = ThreadLocalRandom.current().nextInt(1, 20 + 1);
@@ -29,14 +32,30 @@ public class Guess {
   }
 
 
-  public static void guessLoop( int currentGuess, int min, int max) {
-    System.out.printf("is it %d?\n", nextGuess);
+  public static void guessLoop(int currentGuess, int min, int max) {
+    System.out.printf("cg: %d, min: %d, max: %d\n", currentGuess, min, max);
+    System.out.printf("is it %d?\n", currentGuess);
     ActionEnum token = readInputFromUser();
-    if (handleNonCalcs(token) {
+    if (handleNonCalcs(token)) {
       guessLoop(currentGuess, min, max);
+    } else {
+      switch (token) {
+      case HIGHER:
+        lastData = new CalcData(currentGuess, min, max);
+        doGuess(currentGuess, currentGuess, max);
+        break;
+      case LOWER:
+        lastData = new CalcData(currentGuess, min, max);
+        doGuess(currentGuess, min, currentGuess);
+        break;
+      case OOPS:
+        guessLoop(lastData.current, lastData.min, lastData.max);
+        break;
+      }
     }
-    doGuess(currentGuess, min, max);
   }
+
+
 
 
   /**
@@ -48,7 +67,7 @@ public class Guess {
     * If the max is greater than 0, it means we're out of the doubling
     * phase, and we're calculating midpoints.
     */
-  public static int doGuess(int currentGuess, int min, int max) {
+  public static void doGuess(int currentGuess, int min, int max) {
     if (max == 0) {
       guessLoop(currentGuess * 2, currentGuess * 2, 0);
     } else if (currentGuess == max) {
@@ -56,18 +75,6 @@ public class Guess {
     } else {
       guessLoop(Math.abs(min-max)/2, currentGuess, Math.abs(min-max)/2);
     }
-        case HIGHER:
-          guessLoop(currentGuess * 2, min, currentGuess * 2);
-          break;
-        case LOWER:
-          guessLoop(Math.abs(min-max)/2, min, Math.abs(min-max)/2);
-          break;
-        case OOPS:
-          //TODO
-          guessLoop(currentGuess, min, max);
-          break;
-      }
-      guessLoop(currentGuess, min, max);
   }
 
 
@@ -75,7 +82,7 @@ public class Guess {
     * Handle the things that don't do calculations
     * @return if true, loop without performing calcs
     */
-  public static boolean handleNonCalcs(string token) {
+  public static boolean handleNonCalcs(ActionEnum token) {
       switch (token) {
         case HELP:
           readAndDisplayFile("./resources/instructions.txt");
@@ -90,16 +97,18 @@ public class Guess {
           System.exit(0);
           break;
         default:
-          System.out.println("invalid input");
+          return false;
       }
+      return true;
+
   }
 
 
   /**
     * The data needed for the loop
     */
-  private class CalcData {
-    public Blah(int current, int min, int max) {
+  public static class CalcData {
+    public CalcData(int current, int min, int max) {
       this.current = current;
       this.min = min;
       this.max = max;
@@ -203,6 +212,10 @@ public class Guess {
       case "r":
       case "ready":
         return ActionEnum.READY;
+      case "o":
+      case "oops":
+      case "oop":
+        return ActionEnum.OOPS;
     }
     return ActionEnum.BAD_INPUT;
   }

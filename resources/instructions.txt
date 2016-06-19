@@ -2,8 +2,8 @@
 Instructions: 
 ------------
 
-Pick a number in your mind.  Now, type "ready" at the prompt, 
-like this:
+Pick a number in your mind between 1 and 1000.  
+Now, type "ready" at the prompt, like this:
 
  > ready
 
