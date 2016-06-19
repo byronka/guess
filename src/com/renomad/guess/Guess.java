@@ -11,23 +11,82 @@ import java.util.List;
 
 public class Guess {
 
+
   public static void main(String[] args) {
-    System.out.println("hello");
 		readAndDisplayFile("./resources/banner.txt");
-		System.out.println("Would you like instructions? (yes or no)");
-		System.out.print(" > ");
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			String s = br.readLine().toLowerCase();
-			if (s.equals("y") || s.equals("yes")) {
-        readAndDisplayFile("./resources/instructions.txt");
-			}
-		} catch (IOException ex) {
-		  System.out.println("error reading line");
-		}
+    while (true) {
+      ActionEnum token = readInputFromUser();
+      takeActionForToken(token);
+    }
 	
 
   }
+
+  public void takeActionForToken(ActionEnum token) {
+    switch (token) {
+      case HELP:
+        readAndDisplayFile("./resources/instructions.txt");
+        break;
+      case EMPTY:
+        displayShortHelp();
+        break;
+      case HIGHER:
+        break;
+      case LOWER:
+        break;
+      case END:
+        break;
+    }
+  }
+
+
+  public enum ActionEnum {
+    EMPTY, YES, END, HELP, HIGHER, LOWER 
+  } 
+
+  /**
+    * Here's where we'll get the input from
+    * the user, and return a token (an enum) indicating
+    * what they intended.
+    */
+  public static ActionEnum readInputFromUser() {
+      System.out.print(" > ");
+      String s = "";
+
+      try {
+        BufferedReader br = 
+          new BufferedReader(new InputStreamReader(System.in));
+        s = br.readLine().toLowerCase().trim();
+      } catch (IOException ex) {
+        System.out.println("error reading line");
+      }
+
+      switch (s) {
+        case "y":
+        case "yes":
+          return ActionEnum.YES;
+          break;
+        case "":
+          return ActionEnum.EMPTY;
+          break;
+        case "higher:
+        case "h":
+        case "hi":
+          return ActionEnum.HIGHER;
+          break;
+        case "lower:
+        case "l":
+        case "low":
+          return ActionEnum.HIGHER;
+          break;
+      }
+  }
+
+
+  public static void displayShortHelp() {
+    System.out.println("(higher, lower, yes, end)");
+  }
+
 
   /**
     * a utility method to read the entire contents
@@ -49,16 +108,20 @@ public class Guess {
     }
   }
 
+
   public static void parseInputAndTakeAction(String input) {
    // to be implemented
   }
+
 
   public static void guessHigher(int min, int max) {
    // to be implemented
   }
 
+
   public static void guessLower(int min, int max) {
    // to be implemented
   }
+
 
 }

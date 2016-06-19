@@ -10,3 +10,4 @@ A fantastic numeric guessing game!
 
 Byron Katz, Copyright (2016)
 
+(type ? for help)
