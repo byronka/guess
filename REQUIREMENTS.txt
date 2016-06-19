@@ -313,3 +313,16 @@ There is nothing in the requirements about the bounds for this number.
   to bring them back a step. Otherwise, they'll find themselves
   in the situation where the computer goes into the mode of narrowing
   down to a value in the wrong range.
+
+  New Requirement: "Oops":
+  example of using oops:
+  (human is guessing 120)
+  comp: 80?
+  user: higher.
+  comp: 160?
+  user: higher
+  comp: 320?
+  user: oops
+  comp: ok, I'm back at guessing 160?
+  user: lower
+  ...
