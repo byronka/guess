@@ -27,7 +27,38 @@ public class Guess {
   }
 
 
-  public static boolean takeActionForToken(ActionEnum token, boolean isGuessing) {
+  /**
+    * takes action for what the user wants to do.
+    * @param min the minimum in the range of the computer's guess
+    * @param max the maximum in the range of the computer's guess
+    * @return the computer's guess.
+    */
+  public static int takeActionForTokenWhileGuessing(ActionEnum token, int min, int max) {
+      switch (token) {
+        case HELP:
+          readAndDisplayFile("./resources/instructions.txt");
+          break;
+        case EMPTY:
+          displayShortHelp(isGuessing);
+          break;
+        case HIGHER:
+          return guessHigher(min, max);
+          break;
+        case LOWER:
+          return guessLower(min, max);
+          break;
+        case YES:
+          break;
+        case END:
+          System.out.println("Game over");
+          System.exit(0);
+          break;
+        default:
+          return isGuessing;
+      }
+    }
+
+  public static boolean takeActionForTokenBeforeGuessing(ActionEnum token, boolean isGuessing) {
     switch (token) {
       case READY:
         return true;
@@ -37,20 +68,13 @@ public class Guess {
       case EMPTY:
         displayShortHelp(isGuessing);
         break;
-      case HIGHER:
-        break;
-      case LOWER:
-        break;
-      case YES:
-        break;
       case END:
         System.out.println("Game over");
         System.exit(0);
         break;
       default:
-
+        return isGuessing;
     }
-    return isGuessing;
   }
 
 
@@ -140,11 +164,6 @@ public class Guess {
     for (String s : allLines) {
       System.out.println(s);
     }
-  }
-
-
-  public static void parseInputAndTakeAction(String input) {
-   // to be implemented
   }
 
 
