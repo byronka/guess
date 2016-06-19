@@ -8,41 +8,63 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Guess {
 
 
   public static void main(String[] args) {
 		readAndDisplayFile("./resources/banner.txt");
+    boolean isGuessing = false;
+    int currentGuess = ThreadLocalRandom.current().nextInt(1, 20 + 1);
     while (true) {
+      if (isGuessing) {
+        System.out.printf("is it %d?\n", currentGuess);
+      }
       ActionEnum token = readInputFromUser();
-      takeActionForToken(token);
+      isGuessing = takeActionForToken(token, isGuessing);
     }
-	
-
   }
 
-  public void takeActionForToken(ActionEnum token) {
+
+  public static boolean takeActionForToken(ActionEnum token, boolean isGuessing) {
     switch (token) {
+      case READY:
+        return true;
       case HELP:
         readAndDisplayFile("./resources/instructions.txt");
         break;
       case EMPTY:
-        displayShortHelp();
+        displayShortHelp(isGuessing);
         break;
       case HIGHER:
         break;
       case LOWER:
         break;
-      case END:
+      case YES:
         break;
+      case END:
+        System.out.println("Game over");
+        System.exit(0);
+        break;
+      default:
+
     }
+    return isGuessing;
   }
 
 
   public enum ActionEnum {
-    EMPTY, YES, END, HELP, HIGHER, LOWER 
+    EMPTY,  // the user entered nothing.
+    READY,
+    YES,    
+    END,
+    HELP,
+    HIGHER,
+    LOWER,
+    BAD_INPUT, // the user entered something unparseable
   } 
+
 
   /**
     * Here's where we'll get the input from
@@ -65,26 +87,38 @@ public class Guess {
         case "y":
         case "yes":
           return ActionEnum.YES;
-          break;
         case "":
           return ActionEnum.EMPTY;
-          break;
-        case "higher:
+        case "higher":
         case "h":
         case "hi":
           return ActionEnum.HIGHER;
-          break;
-        case "lower:
+        case "lower":
         case "l":
         case "low":
           return ActionEnum.HIGHER;
-          break;
+        case "end":
+        case "e":
+          return ActionEnum.END;
+        case "i":
+        case "instructions":
+        case "help":
+        case "?":
+          return ActionEnum.HELP;
+        case "r":
+        case "ready":
+          return ActionEnum.READY;
       }
+      return ActionEnum.BAD_INPUT;
   }
 
 
-  public static void displayShortHelp() {
-    System.out.println("(higher, lower, yes, end)");
+  public static void displayShortHelp(boolean isGuessing) {
+    if (isGuessing) {
+      System.out.println("(higher, lower, yes, end, ? for help)");
+    } else {
+      System.out.println("(end, ready, ? for help)");
+    }
   }
 
 
