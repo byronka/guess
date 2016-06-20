@@ -14,7 +14,7 @@ public class Guess {
 
 
   //Used for storing the last data, so we can undo
-  public static CalcData lastData = null;
+  public static calcData lastData = null;
 
   public static void main(String[] args) {
 		readAndDisplayFile("./resources/banner.txt");
@@ -41,11 +41,11 @@ public class Guess {
     } else {
       switch (token) {
       case HIGHER:
-        lastData = new CalcData(currentGuess, min, max);
+        lastData = new calcData(currentGuess, min, max);
         doGuess(currentGuess, currentGuess, max);
         break;
       case LOWER:
-        lastData = new CalcData(currentGuess, min, max);
+        lastData = new calcData(currentGuess, min, max);
         doGuess(currentGuess, min, currentGuess);
         break;
       case OOPS:
@@ -54,8 +54,6 @@ public class Guess {
       }
     }
   }
-
-
 
 
   /**
@@ -107,8 +105,8 @@ public class Guess {
   /**
     * The data needed for the loop
     */
-  public static class CalcData {
-    public CalcData(int current, int min, int max) {
+  public static class calcData {
+    public calcData(int current, int min, int max) {
       this.current = current;
       this.min = min;
       this.max = max;
@@ -200,7 +198,7 @@ public class Guess {
       case "lower":
       case "l":
       case "low":
-        return ActionEnum.HIGHER;
+        return ActionEnum.LOWER;
       case "end":
       case "e":
         return ActionEnum.END;
