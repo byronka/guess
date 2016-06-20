@@ -5,22 +5,17 @@ Instructions:
 Pick a number in your mind between 1 and 1000.  
 Now, type "ready" at the prompt, like this:
 
- > ready
+ > ready 
 
-and then press the Enter key.
+(and press the Enter key)
 
-The computer will try to guess your number.  Each time, You must type
-"higher" or "lower", and it will offer new guesses.
-
-If the computer has guessed the proper number, type "yes" at the
-prompt, then press enter.
-
- > yes
+The computer will try to guess your number.  Each time, you must type
+"higher" or "lower", and it will offer new guesses.  If the computer
+has guessed the proper number, type "yes" at the prompt, then press
+enter.
 
 If you wish to end before the computer has guessed your number, type
 "end" at the prompt, then press enter.
-
- > end
 
 If you enter "higher" or "lower" incorrectly, just type "oops" and it
 will give you the previous query.

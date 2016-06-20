@@ -43,7 +43,6 @@ public class Guess {
     * too big scope == the suck.
     */
   public static void guessLoop(int currentGuess, int otherBound, ActionEnum direction, boolean firstPart) {
-    System.out.printf("cg: %d, ob: %d, firstpart: %b\n", currentGuess, otherBound, firstPart);
     System.out.printf("is it %d?\n", currentGuess);
     ActionEnum token = readInputFromUser();
     if (handleNonCalcs(token)) {
@@ -57,7 +56,7 @@ public class Guess {
       // Simply - if the user starts out heading higher, firstPart should
       // stay true until they switch direction and then never leave false.  And,
       // vice-versa for starting lower.
-      firstPart = direction != null && token == direction && firstPart;
+      firstPart = direction != null ? token == direction && firstPart : firstPart;
       direction = token;
       doGuess(currentGuess, otherBound, direction, firstPart);
     }
