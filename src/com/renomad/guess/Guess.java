@@ -27,31 +27,39 @@ public class Guess {
     }
 
     // at this point, we're off to the races!
-    guessLoop(currentGuess, 0, 0);
+    // start the guessing with doubling and halving.  Later, switch to use midpoints.
+    guessLoop(currentGuess, currentGuess, null, true );
 
   }
 
 
-  public static void guessLoop(int currentGuess, int min, int max) {
-    System.out.printf("cg: %d, min: %d, max: %d\n", currentGuess, min, max);
+  /**
+    * we want to loop, suggesting a guess, and then taking the user's action.
+    * we also want to separate out the calculation from the user-input portions.
+    * so we broke this into two pieces - user interface - guessLoop, and calcs - doGuess
+    *
+    * also, our algorithm depends on setting an initial direction and then noticing 
+    * when that direction changes.  And, we don't want to use globals, because 
+    * too big scope == the suck.
+    */
+  public static void guessLoop(int currentGuess, int otherBound, ActionEnum direction, boolean firstPart) {
+    System.out.printf("cg: %d, ob: %d, firstpart: %b\n", currentGuess, otherBound, firstPart);
     System.out.printf("is it %d?\n", currentGuess);
     ActionEnum token = readInputFromUser();
     if (handleNonCalcs(token)) {
-      guessLoop(currentGuess, min, max);
-    } else {
-      switch (token) {
-      case HIGHER:
-        lastData = new calcData(currentGuess, min, max);
-        doGuess(currentGuess, currentGuess, max);
-        break;
-      case LOWER:
-        lastData = new calcData(currentGuess, min, max);
-        doGuess(currentGuess, min, currentGuess);
-        break;
-      case OOPS:
-        guessLoop(lastData.current, lastData.min, lastData.max);
-        break;
-      }
+      guessLoop(currentGuess, otherBound, direction, firstPart);
+    } else if (token == ActionEnum.OOPS) {
+      guessLoop(lastData.current, lastData.otherBound, lastData.direction, lastData.firstPart);
+    } else { // this is where we handle HIGHER or LOWER
+      lastData = new calcData(currentGuess, otherBound, direction, firstPart);
+      //this next line is a little tricky: we're trying to stay true until
+      // they switch direction.  Once firstPart goes false, it will stay false.
+      // Simply - if the user starts out heading higher, firstPart should
+      // stay true until they switch direction and then never leave false.  And,
+      // vice-versa for starting lower.
+      firstPart = direction != null && token == direction && firstPart;
+      direction = token;
+      doGuess(currentGuess, otherBound, direction, firstPart);
     }
   }
 
@@ -62,16 +70,30 @@ public class Guess {
     * if we are given a max that is 0, it means the user told us
     * to guess higher, and we're doubling each time.
     * 
-    * If the max is greater than 0, it means we're out of the doubling
-    * phase, and we're calculating midpoints.
+    * @param firstPart - our algorithm is this: at the onset, we
+    *     scale upwards or downwards by doubling or halving.  Only once
+    *     we switch directions do we start finding midpoints.  So, this
+    *     switches the algorithm we use.
     */
-  public static void doGuess(int currentGuess, int min, int max) {
-    if (max == 0) {
-      guessLoop(currentGuess * 2, currentGuess * 2, 0);
-    } else if (currentGuess == max) {
-      guessLoop(Math.abs(min-max)/2, Math.abs(min-max)/2, currentGuess);
+  public static void doGuess(int currentGuess, int otherBound, ActionEnum direction, boolean firstPart) {
+    // doubling or halving at this point
+    if (firstPart) {
+      if (direction == ActionEnum.HIGHER) {
+        guessLoop(currentGuess * 2, currentGuess, direction, firstPart);
+      } else if (direction == ActionEnum.LOWER) {
+        guessLoop(currentGuess / 2, currentGuess, direction, firstPart);
+      } else {
+        System.out.println("error - only option should be higher or lower");
+      }
     } else {
-      guessLoop(Math.abs(min-max)/2, currentGuess, Math.abs(min-max)/2);
+        // midpoints at this point.  this is where we start using otherBound
+      if (direction == ActionEnum.HIGHER) {
+        guessLoop(currentGuess + Math.abs(currentGuess - otherBound)/2, currentGuess, direction, false);
+      } else if (direction == ActionEnum.LOWER) {
+        guessLoop(currentGuess - Math.abs(currentGuess - otherBound)/2, currentGuess, direction, false);
+      } else {
+        System.out.println("error - only option should be higher or lower");
+      }
     }
   }
 
@@ -106,15 +128,17 @@ public class Guess {
     * The data needed for the loop
     */
   public static class calcData {
-    public calcData(int current, int min, int max) {
+    public calcData(int current, int otherBound, ActionEnum direction, boolean firstPart) {
       this.current = current;
-      this.min = min;
-      this.max = max;
+      this.otherBound = otherBound;
+      this.direction = direction;
+      this.firstPart = firstPart;
     }
 
     public final int current;
-    public final int min;
-    public final int max;
+    public final int otherBound;
+    public final ActionEnum direction;
+    public final boolean firstPart;
   }
 
 
