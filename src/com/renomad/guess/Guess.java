@@ -14,7 +14,7 @@ public class Guess {
 
 
   //Used for storing the last data, so we can undo
-  public static calcData lastData = null;
+  private static CalcData lastData = null;
 
   public static void main(String[] args) {
 		readAndDisplayFile("./resources/banner.txt");
@@ -43,14 +43,14 @@ public class Guess {
     * too big scope == the suck.
     */
   public static void guessLoop(int currentGuess, int otherBound, ActionEnum direction, boolean firstPart) {
-    System.out.printf("is it %d?\n", currentGuess);
+    System.out.printf("is it %d?%n", currentGuess);
     ActionEnum token = readInputFromUser();
     if (handleNonCalcs(token)) {
       guessLoop(currentGuess, otherBound, direction, firstPart);
     } else if (token == ActionEnum.OOPS) {
       guessLoop(lastData.current, lastData.otherBound, lastData.direction, lastData.firstPart);
     } else { // this is where we handle HIGHER or LOWER
-      lastData = new calcData(currentGuess, otherBound, direction, firstPart);
+      lastData = new CalcData(currentGuess, otherBound, direction, firstPart);
       //this next line is a little tricky: we're trying to stay true until
       // they switch direction.  Once firstPart goes false, it will stay false.
       // Simply - if the user starts out heading higher, firstPart should
@@ -126,8 +126,8 @@ public class Guess {
   /**
     * The data needed for the loop
     */
-  public static class calcData {
-    public calcData(int current, int otherBound, ActionEnum direction, boolean firstPart) {
+  public static class CalcData {
+    public CalcData(int current, int otherBound, ActionEnum direction, boolean firstPart) {
       this.current = current;
       this.otherBound = otherBound;
       this.direction = direction;
@@ -195,10 +195,16 @@ public class Guess {
 
     try {
       BufferedReader br = 
-        new BufferedReader(new InputStreamReader(System.in));
-      s = br.readLine().toLowerCase().trim();
+        new BufferedReader(new InputStreamReader(System.in, StandardCharsets.US_ASCII) );
+      s = br.readLine();
+      if (s == null) {
+        throw new Exception("readLine returned null");   
+      }
+      s.toLowerCase().trim(); 
     } catch (IOException ex) {
       System.out.println("error reading line");
+    } catch (Exception ex) {
+      System.out.println(ex);
     }
     return analyzeInput(s);
   }
@@ -263,7 +269,7 @@ public class Guess {
       allLines = 
         Files.readAllLines(Paths.get(filename), StandardCharsets.US_ASCII);
     } catch (IOException ex) {
-      System.out.printf("Error: couldn't read %s\n", filename);
+      System.out.printf("Error: couldn't read %s%n", filename);
       System.out.println(ex);
     }
     for (String s : allLines) {
