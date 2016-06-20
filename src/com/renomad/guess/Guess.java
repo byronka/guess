@@ -58,7 +58,12 @@ public class Guess {
       // vice-versa for starting lower.
       firstPart = direction != null ? token == direction && firstPart : firstPart;
       direction = token;
-      doGuess(currentGuess, otherBound, direction, firstPart);
+      try {
+      CalcData result = doCalc(currentGuess, otherBound, direction, firstPart);
+      guessLoop(result.current, result.otherBound, result.direction, result.firstPart);
+      } catch (Exception ex) {
+        System.out.println(ex);
+      }
     }
   }
 
@@ -74,24 +79,24 @@ public class Guess {
     *     we switch directions do we start finding midpoints.  So, this
     *     switches the algorithm we use.
     */
-  public static void doGuess(int currentGuess, int otherBound, ActionEnum direction, boolean firstPart) {
+  public static CalcData doCalc(int currentGuess, int otherBound, ActionEnum direction, boolean firstPart) throws Exception {
     // doubling or halving at this point
     if (firstPart) {
       if (direction == ActionEnum.HIGHER) {
-        guessLoop(currentGuess * 2, currentGuess, direction, firstPart);
+        return new CalcData(currentGuess * 2, currentGuess, direction, firstPart);
       } else if (direction == ActionEnum.LOWER) {
-        guessLoop(currentGuess / 2, currentGuess, direction, firstPart);
+        return new CalcData(currentGuess / 2, currentGuess, direction, firstPart);
       } else {
-        System.out.println("error - only option should be higher or lower");
+        throw new Exception("error - only option should be higher or lower");
       }
     } else {
         // midpoints at this point.  this is where we start using otherBound
       if (direction == ActionEnum.HIGHER) {
-        guessLoop(currentGuess + Math.abs(currentGuess - otherBound)/2, currentGuess, direction, false);
+        return new CalcData(currentGuess + Math.abs(currentGuess - otherBound)/2, currentGuess, direction, false);
       } else if (direction == ActionEnum.LOWER) {
-        guessLoop(currentGuess - Math.abs(currentGuess - otherBound)/2, currentGuess, direction, false);
+        return new CalcData(currentGuess - Math.abs(currentGuess - otherBound)/2, currentGuess, direction, false);
       } else {
-        System.out.println("error - only option should be higher or lower");
+        throw new Exception("error - only option should be higher or lower");
       }
     }
   }
