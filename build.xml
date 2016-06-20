@@ -56,7 +56,7 @@
       <pathelement path=" lib/junit-4.12.jar" />
 		</classpath>
 		<formatter type="plain" usefile="false"/>
-		<test name="com.renomad.guess.tests.GuessTests"/>
+		<test name="com.renomad.guess.GuessTests"/>
 	</junit>
 	</target>
 
