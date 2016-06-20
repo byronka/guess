@@ -70,7 +70,7 @@
   <!-- static code analysis -->
     <property name="findbugs.dist.dir" value="./utils/findbugs" />
 
-  <target name="lint-all" description="runs all the lint programs" >
+  <target name="lint-all" depends="compile" description="runs all the lint programs" >
 		<antcall target="findbugs" />
 	</target>
 
