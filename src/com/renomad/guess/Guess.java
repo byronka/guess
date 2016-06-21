@@ -93,10 +93,12 @@ public class Guess {
       }
     } else {
         // midpoints at this point.  this is where we start using otherBound
+        // distance to the midpoint
+        int dist = (int)Math.ceil(Math.abs(((float)currentGuess-otherBound)/2));
       if (direction == ActionEnum.HIGHER) {
-        return new CalcData(currentGuess + Math.abs(currentGuess - otherBound)/2, currentGuess, direction, false);
+        return new CalcData(currentGuess + dist, currentGuess, direction, false);
       } else if (direction == ActionEnum.LOWER) {
-        return new CalcData(currentGuess - Math.abs(currentGuess - otherBound)/2, currentGuess, direction, false);
+        return new CalcData(currentGuess - dist, currentGuess, direction, false);
       } else {
         throw new Exception("error - only option should be higher or lower");
       }
