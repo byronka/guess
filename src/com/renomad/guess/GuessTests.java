@@ -92,9 +92,9 @@ public class GuessTests {
 
 
   // what happens if the user says "higher" when we're
-  // guessing 1000?
+  // guessing 998 and doubling? (Exception should be thrown)
   @Test
-  public void test_higher_at_upper_bound() {
+  public void test_higher_at_upper_bound_doubling_above_1000() {
     try {
       CalcData result = Guess.doCalc(998, 499, ActionEnum.HIGHER, true);
       fail("no exception thrown when it should have been");
@@ -103,16 +103,50 @@ public class GuessTests {
     }
   }
 
+  // what happens if the user says "higher" when we're
+  // guessing 501 and doubling? (Exception should be thrown)
+  @Test
+  public void test_higher_at_upper_bound_doubling_at_1002() {
+    try {
+      CalcData result = Guess.doCalc(501, 250, ActionEnum.HIGHER, true);
+      fail("no exception thrown when it should have been");
+    } catch (Exception ex) {
+      assertEquals("above upper bound", ex.getMessage());
+    }
+  }
+
+  // what happens if the user says "higher" when we're
+  // guessing 500 and doubling? (It should work ok)
+  @Test
+  public void test_higher_at_upper_bound_doubling_at_1000() {
+    try {
+      CalcData result = Guess.doCalc(500, 250, ActionEnum.HIGHER, true);
+    } catch (Exception ex) {
+      fail("should not throw an exception for this case");
+    }
+  }
+
   
   // what happens if the user says "lower" when we're
-  // guessing 1?
+  // guessing 1 and halving?
   @Test
-  public void test_lower_at_lower_bound() {
+  public void test_lower_at_lower_bound_halving_1() {
     try {
       CalcData result = Guess.doCalc(1, 2, ActionEnum.LOWER, true);
       fail("no exception thrown when it should have been");
     } catch (Exception ex) {
       assertEquals("below lower bound", ex.getMessage());
+    }
+  }
+
+  // what happens if the user says "lower" when we're
+  // guessing 2 and halving?
+  @Test
+  public void test_lower_at_lower_bound_halving_2() {
+    try {
+      CalcData result = Guess.doCalc(2, 4, ActionEnum.LOWER, true);
+    } catch (Exception ex) {
+      fail("should be no exception this case.");
     }
   }
 
