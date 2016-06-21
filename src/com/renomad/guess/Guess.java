@@ -18,6 +18,10 @@ public class Guess {
   //Used for storing the last data, so we can undo
   private static CalcData lastData = null;
 
+  // The upper and lower bounds for guessing.
+  private static final int MAX_BOUND = 1000;
+  private static final int MIN_BOUND = 1;
+
   public static void main(String[] args) {
 		readAndDisplayFile("./resources/banner.txt");
     int currentGuess = ThreadLocalRandom.current().nextInt(1, 20 + 1);
@@ -85,8 +89,10 @@ public class Guess {
     // doubling or halving at this point
     if (firstPart) {
       if (direction == ActionEnum.HIGHER) {
+        if ((currentGuess * 2) > MAX_BOUND) throw new Exception("above upper bound");
         return new CalcData(currentGuess * 2, currentGuess, direction, firstPart);
       } else if (direction == ActionEnum.LOWER) {
+        if ((currentGuess / 2) < MIN_BOUND) throw new Exception("below lower bound");
         return new CalcData(currentGuess / 2, currentGuess, direction, firstPart);
       } else {
         throw new Exception("error - only option should be higher or lower");

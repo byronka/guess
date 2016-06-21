@@ -95,7 +95,12 @@ public class GuessTests {
   // guessing 1000?
   @Test
   public void test_higher_at_upper_bound() {
-    // TODO
+    try {
+      CalcData result = Guess.doCalc(998, 499, ActionEnum.HIGHER, true);
+      fail("no exception thrown when it should have been");
+    } catch (Exception ex) {
+      assertEquals("above upper bound", ex.getMessage());
+    }
   }
 
   
@@ -103,7 +108,12 @@ public class GuessTests {
   // guessing 1?
   @Test
   public void test_lower_at_lower_bound() {
-    // TODO
+    try {
+      CalcData result = Guess.doCalc(1, 2, ActionEnum.LOWER, true);
+      fail("no exception thrown when it should have been");
+    } catch (Exception ex) {
+      assertEquals("below lower bound", ex.getMessage());
+    }
   }
 
   // what happens if the user made a mistake and figured
