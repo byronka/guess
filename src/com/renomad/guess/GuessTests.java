@@ -80,4 +80,46 @@ public class GuessTests {
     }
   }
 
+  // Here, we'll test every possible permutation in the game. The game
+  // can start with any number, randomly, between 0 and 20 exclusive, and
+  // the user can guess any number between 1 and 1000, inclusive.  That means
+  // there are 19 * 1000 possible permutations.  We'll test that all of them
+  // are reachable.
+  @Test
+  public void test_every_possibility_1_to_1000() {
+    // TODO
+  }
+
+
+  // what happens if the user says "higher" when we're
+  // guessing 1000?
+  @Test
+  public void test_higher_at_upper_bound() {
+    // TODO
+  }
+
+  
+  // what happens if the user says "lower" when we're
+  // guessing 1?
+  @Test
+  public void test_lower_at_lower_bound() {
+    // TODO
+  }
+
+  // what happens if the user made a mistake and figured
+  // it out too late, and now we're doing midpoints and
+  // cannot escape to where they wanted to go?  Yes, it's
+  // an edge case and sort of user error, because one
+  // of the times they said "higher" or "lower" they were 
+  // wrong, but they shouldn't be prevented from getting
+  // there.  Perhaps once the system sees them guessing continuously
+  // past a bound, it should switch back to doubling/halving.
+  @Test
+  public void test_switching_back_to_firstpart() {
+    // TODO
+  }
+
+
+  // other tests:
+  //   what happens if the user presses ctrl-c or ctrl-d while playing?
 }
