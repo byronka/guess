@@ -88,26 +88,40 @@ public class GuessTests {
   @Test
   public void test_every_possibility_1_to_1000() {
     // some temporary variables
-    int current = 0;
-    int bound = 0;
-    ActionEnum action;
-    boolean isFirstPart;
+    ActionEnum action;  // the action = higher, lower, or yes
+    boolean isFirstPart = true; // if true, double or halve.  otherwise, midpoints
     CalcData result;
 
     // each of the possible first guesses by the computer
     for (int firstGuess = 1; firstGuess <= 19; firstGuess++) {
 
-      result = new CalcData(firstGuess, firstGuess, 
-      current = firstGuess;
-      isFirstPart = true;
       // each of possible user choices.
       for (int userChoice = 1; userChoice <= 1000; userChoice++) {
-        action = userAction(userChoice, current);
-        CalcData result = Guess.doCalc(firstGuess, firstGuess, action, isFirstPart);
 
+        // the user's first action
+        action = userAction(userChoice, firstGuess);
+        result = new CalcData(firstGuess, firstGuess, action, isFirstPart);
+
+        // we'll stop running the guessing game at a hundred, to avoid cases
+        // where we would have hit an infinite loop
+        int count = 0;
+        while (action != ActionEnum.YES) {
+
+          try {
+          result = Guess.doCalc(result.current, result.otherBound, action, result.isFirstPart);
+          } catch (Exception ex) {
+            System.out.println(ex);
+            break;
+          }
+          action = userAction(userChoice, result.current);
+          count++;
+          if (count > 100) {
+            break;
+          }
+        }
+        System.out.printf("firstGuess: %d, userChoice: %d, count: %d%n", firstGuess, userChoice, count);
 
       }
-
     }
   }
 
@@ -116,10 +130,10 @@ public class GuessTests {
     if (privateChoice > computerGuess) {
       return ActionEnum.HIGHER;
     }
-    if (privateChoice < computerGuess) {
+    else if (privateChoice < computerGuess) {
       return ActionEnum.LOWER;
     }
-    if (privateChoice == computerGuess) {
+    else {
       return ActionEnum.YES;
     }
   }
