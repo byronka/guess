@@ -426,3 +426,26 @@ There is nothing in the requirements about the bounds for this number.
   comp: 123?
   user: yes
   
+Thoughts:
+
+      123                                     8              
+      ---                                    ---             
+              12?  high                              12? l   
+      double: 24?  h                         halve  : 6? h   
+           d: 48?  h                         m 6-12 : 9? l   
+           d: 96?  h                         m 6-9  : 8? yes 
+           d: 192? l <--- switch to
+ midpoint of               midpoints
+   96-192   : 144? l
+  m 96-144  : 120? h
+  m 120-144 : 132? l            meta: double or halve until
+  m 120-132 : 126? l             user changes direction, then midpoints
+  m 120-126 : 123? yes
+
+considering how to switch out of the first part of algorithm:
+                           null
+                           higher
+                           higher
+                           lower
+
+
