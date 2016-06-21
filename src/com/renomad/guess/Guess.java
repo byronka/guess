@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import com.renomad.guess.ActionEnum;
+import com.renomad.guess.CalcData;
 
 public class Guess {
 
@@ -129,25 +131,6 @@ public class Guess {
 
 
   /**
-    * The data needed for the loop
-    */
-  public static class CalcData {
-    public CalcData(int current, int otherBound, ActionEnum direction, boolean firstPart) {
-      this.current = current;
-      this.otherBound = otherBound;
-      this.direction = direction;
-      this.firstPart = firstPart;
-    }
-
-    public final int current;
-    public final int otherBound;
-    public final ActionEnum direction;
-    public final boolean firstPart;
-  }
-
-
-
-  /**
     * parses the user input before they start the game. 
     * @param a token for what action to take
     * @return whether to start the game
@@ -173,20 +156,6 @@ public class Guess {
   }
 
 
-  /**
-    * The various user actions available
-    */
-  public enum ActionEnum {
-    EMPTY,  // the user entered nothing.
-    READY,
-    YES,    
-    END,
-    HELP,
-    HIGHER,
-    LOWER,
-    BAD_INPUT, // the user entered something unparseable
-    OOPS  // if ther user wants to undo their previous entry
-  } 
 
 
   /**

@@ -15,7 +15,13 @@ public class GuessTests {
 
   @Test
   public void parametric_test_of_calcs() {
-    assertTrue(0 == 1);
+    try {
+    CalcData result = Guess.doCalc(2, 2, ActionEnum.HIGHER, true);
+    assertEquals(4, result.current);
+    assertEquals(2, result.otherBound);
+    } catch (Exception ex) {
+      fail("exception thrown");
+    }
   }
 
 }
