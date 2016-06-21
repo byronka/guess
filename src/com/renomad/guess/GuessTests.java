@@ -87,7 +87,41 @@ public class GuessTests {
   // are reachable.
   @Test
   public void test_every_possibility_1_to_1000() {
-    // TODO
+    // some temporary variables
+    int current = 0;
+    int bound = 0;
+    ActionEnum action;
+    boolean isFirstPart;
+    CalcData result;
+
+    // each of the possible first guesses by the computer
+    for (int firstGuess = 1; firstGuess <= 19; firstGuess++) {
+
+      result = new CalcData(firstGuess, firstGuess, 
+      current = firstGuess;
+      isFirstPart = true;
+      // each of possible user choices.
+      for (int userChoice = 1; userChoice <= 1000; userChoice++) {
+        action = userAction(userChoice, current);
+        CalcData result = Guess.doCalc(firstGuess, firstGuess, action, isFirstPart);
+
+
+      }
+
+    }
+  }
+
+  // the user will correctly say "higher" or "lower" or "yes"
+  private ActionEnum userAction(int privateChoice, int computerGuess) {
+    if (privateChoice > computerGuess) {
+      return ActionEnum.HIGHER;
+    }
+    if (privateChoice < computerGuess) {
+      return ActionEnum.LOWER;
+    }
+    if (privateChoice == computerGuess) {
+      return ActionEnum.YES;
+    }
   }
 
 
