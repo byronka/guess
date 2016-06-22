@@ -109,7 +109,6 @@ public class Guess {
     // stay true until they switch prevDirection and then never leave false.  And,
     // vice-versa for starting lower.
     isFirstPart = prevDirection == null ? isFirstPart : recentChoice == prevDirection && isFirstPart;
-    CalcData result = lastData;
 
     // doubling or halving at this point
     if (isFirstPart) {
@@ -207,7 +206,7 @@ public class Guess {
       if (s == null) {
         throw new Exception("readLine returned null");   
       }
-      s.toLowerCase().trim(); 
+      s = s.toLowerCase().trim(); 
     } catch (IOException ex) {
       System.out.println("error reading line");
     } catch (Exception ex) {
