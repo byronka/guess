@@ -34,42 +34,56 @@ public class Guess {
 
     // at this point, we're off to the races!
     // start the guessing with doubling and halving.  Later, switch to use midpoints.
-    guessLoop(currentGuess, currentGuess, null, true );
+    userInputAndTakeAction(currentGuess, currentGuess, null, true );
 
   }
 
-
-  /**
-    * we want to loop, suggesting a guess, and then taking the user's action.
-    * we also want to separate out the calculation from the user-input portions.
-    * so we broke this into two pieces - user interface - guessLoop, and calcs - doGuess
-    *
-    * also, our algorithm depends on setting an initial direction and then noticing 
-    * when that direction changes.  And, we don't want to use globals, because 
-    * too big scope == the suck.
-    */
-  public static void guessLoop(int currentGuess, int otherBound, ActionEnum direction, boolean isFirstPart) {
+  public static ActionEnum getInputFromUser(int currentGuess) {
     System.out.printf("is it %d?%n", currentGuess);
     ActionEnum token = readInputFromUser();
-    if (handleNonCalcs(token)) {
-      guessLoop(currentGuess, otherBound, direction, isFirstPart);
-    } else if (token == ActionEnum.OOPS) {
-      guessLoop(lastData.current, lastData.otherBound, lastData.direction, lastData.isFirstPart);
-    } else { // this is where we handle HIGHER or LOWER
-      lastData = new CalcData(currentGuess, otherBound, direction, isFirstPart);
-      //this next line is a little tricky: we're trying to stay true until
-      // they switch direction.  Once isFirstPart goes false, it will stay false.
-      // Simply - if the user starts out heading higher, isFirstPart should
-      // stay true until they switch direction and then never leave false.  And,
-      // vice-versa for starting lower.
-      isFirstPart = direction != null ? token == direction && isFirstPart : isFirstPart;
-      direction = token;
-      try {
-      CalcData result = doCalc(currentGuess, otherBound, direction, isFirstPart);
-      guessLoop(result.current, result.otherBound, result.direction, result.isFirstPart);
-      } catch (Exception ex) {
-        System.out.println(ex);
-      }
+    return token;
+  }
+
+  /**
+    * here we get some input from the user and take an action.
+    */
+  public static void userInputAndTakeAction(int currentGuess, int otherBound, ActionEnum direction, boolean isFirstPart) {
+    ActionEnum token = getInputFromUser(currentGuess);
+    switch (token) {
+      case HELP:
+        readAndDisplayFile("./resources/instructions_while_playing.txt");
+        userInputAndTakeAction(currentGuess, otherBound, direction, isFirstPart);
+        break;
+      case EMPTY:
+        displayShortHelpInGame();
+        userInputAndTakeAction(currentGuess, otherBound, direction, isFirstPart);
+        break;
+      case YES:
+        System.out.println("Fantastic!");
+      case END:
+        System.out.println("Game over");
+        System.exit(0);
+        break;
+      case HIGHER:
+      case LOWER:
+        CalcData result = null;
+        try {
+          result = doCalc(token, currentGuess, otherBound, direction, isFirstPart);
+        } catch (Exception ex) {
+          // no exceptions should ever happen - they are merely an artifact
+          // of the development process.  They are to help with debugging.
+          System.out.println(ex);
+        }
+        userInputAndTakeAction(result.current, result.otherBound, result.direction, result.isFirstPart);
+        break;
+      case OOPS:
+        if (lastData != null) {
+          userInputAndTakeAction(lastData.current, lastData.otherBound, lastData.direction, lastData.isFirstPart);
+        }
+        System.out.println("cannot oops yet, you haven't done anything!");
+      default:
+        System.out.println("Invalid input");
+        userInputAndTakeAction(currentGuess, otherBound, direction, isFirstPart);
     }
   }
 
@@ -85,15 +99,26 @@ public class Guess {
     *     we switch directions do we start finding midpoints.  So, this
     *     switches the algorithm we use.
     */
-  public static CalcData doCalc(int currentGuess, int otherBound, ActionEnum direction, boolean isFirstPart) throws Exception {
+  public static CalcData doCalc(ActionEnum recentChoice, int currentGuess, int otherBound, ActionEnum prevDirection, boolean isFirstPart) throws Exception {
+    // record state if the user says "oops!"
+    lastData = new CalcData(currentGuess, otherBound, prevDirection, isFirstPart);
+
+    //this next line is a little tricky: we're trying to stay true until
+    // they switch prevDirection.  Once isFirstPart goes false, it will stay false.
+    // Simply - if the user starts out heading higher, isFirstPart should
+    // stay true until they switch prevDirection and then never leave false.  And,
+    // vice-versa for starting lower.
+    isFirstPart = prevDirection == null ? isFirstPart : recentChoice == prevDirection && isFirstPart;
+    CalcData result = lastData;
+
     // doubling or halving at this point
     if (isFirstPart) {
-      if (direction == ActionEnum.HIGHER) {
-        if ((currentGuess * 2) > MAX_BOUND) throw new Exception("above upper bound");
-        return new CalcData(currentGuess * 2, currentGuess, direction, isFirstPart);
-      } else if (direction == ActionEnum.LOWER) {
-        if ((currentGuess / 2) < MIN_BOUND) throw new Exception("below lower bound");
-        return new CalcData(currentGuess / 2, currentGuess, direction, isFirstPart);
+      if (recentChoice == ActionEnum.HIGHER) {
+        int doubleGuess = (currentGuess * 2) > MAX_BOUND ? MAX_BOUND : currentGuess * 2;
+        return new CalcData(doubleGuess, currentGuess, recentChoice, isFirstPart);
+      } else if (recentChoice == ActionEnum.LOWER) {
+        int halveGuess = (currentGuess / 2) <= MIN_BOUND ? 1 : currentGuess / 2;
+        return new CalcData(halveGuess, currentGuess, recentChoice, isFirstPart);
       } else {
         throw new Exception("error - only option should be higher or lower");
       }
@@ -101,10 +126,10 @@ public class Guess {
         // midpoints at this point.  this is where we start using otherBound
         // distance to the midpoint
         int dist = (int)Math.ceil(Math.abs(((float)currentGuess-otherBound)/2));
-      if (direction == ActionEnum.HIGHER) {
-        return new CalcData(currentGuess + dist, currentGuess, direction, false);
-      } else if (direction == ActionEnum.LOWER) {
-        return new CalcData(currentGuess - dist, currentGuess, direction, false);
+      if (recentChoice == ActionEnum.HIGHER) {
+        return new CalcData(currentGuess + dist, currentGuess, recentChoice, false);
+      } else if (recentChoice == ActionEnum.LOWER) {
+        return new CalcData(currentGuess - dist, currentGuess, recentChoice, false);
       } else {
         throw new Exception("error - only option should be higher or lower");
       }
@@ -245,7 +270,7 @@ public class Guess {
     *
     * @param filename the name of the file we'll read and display
     */
-  public static void readAndDisplayFile(String filename) {
+  private static void readAndDisplayFile(String filename) {
     List<String> allLines = new ArrayList<String>();
     try {
       allLines = 

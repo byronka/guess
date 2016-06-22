@@ -18,13 +18,13 @@ public class GuessTests {
   @Test
   public void test_doubling() {
     try {
-      CalcData result = Guess.doCalc(2, 2, ActionEnum.HIGHER, true);
+      CalcData result = Guess.doCalc(ActionEnum.HIGHER, 2, 2, ActionEnum.HIGHER, true);
       assertEquals(4, result.current);
       assertEquals(2, result.otherBound);
-      result = Guess.doCalc(result.current, result.otherBound, ActionEnum.HIGHER, true);
+      result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, ActionEnum.HIGHER, true);
       assertEquals(8, result.current);
       assertEquals(4, result.otherBound);
-      result = Guess.doCalc(result.current, result.otherBound, ActionEnum.HIGHER, true);
+      result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, ActionEnum.HIGHER, true);
       assertEquals(16, result.current);
       assertEquals(8, result.otherBound);
     } catch (Exception ex) {
@@ -38,13 +38,13 @@ public class GuessTests {
   @Test
   public void test_halving() {
     try {
-      CalcData result = Guess.doCalc(18, 18, ActionEnum.LOWER, true);
+      CalcData result = Guess.doCalc(ActionEnum.LOWER, 18, 18, ActionEnum.LOWER, true);
       assertEquals(9, result.current);
       assertEquals(18, result.otherBound);
-      result = Guess.doCalc(result.current, result.otherBound, ActionEnum.LOWER, true);
+      result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, ActionEnum.LOWER, true);
       assertEquals(4, result.current);
       assertEquals(9, result.otherBound);
-      result = Guess.doCalc(result.current, result.otherBound, ActionEnum.LOWER, true);
+      result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, ActionEnum.LOWER, true);
       assertEquals(2, result.current);
       assertEquals(4, result.otherBound);
     } catch (Exception ex) {
@@ -60,25 +60,26 @@ public class GuessTests {
   @Test
   public void test_switching_to_midpoints() {
     try {
-      CalcData result = Guess.doCalc(30, 15, ActionEnum.HIGHER, true);
+      CalcData result = Guess.doCalc(ActionEnum.HIGHER, 30, 15, ActionEnum.HIGHER, true);
       assertEquals(60, result.current);
       assertEquals(30, result.otherBound);
-      result = Guess.doCalc(result.current, result.otherBound, ActionEnum.LOWER, false);
+      result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, ActionEnum.LOWER, false);
       assertEquals(45, result.current);
       assertEquals(60, result.otherBound);
-      result = Guess.doCalc(result.current, result.otherBound, ActionEnum.HIGHER, false);
+      result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, ActionEnum.HIGHER, false);
       assertEquals(53, result.current);
       assertEquals(45, result.otherBound);
-      result = Guess.doCalc(result.current, result.otherBound, ActionEnum.LOWER, false);
+      result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, ActionEnum.LOWER, false);
       assertEquals(49, result.current);
       assertEquals(53, result.otherBound);
-      result = Guess.doCalc(result.current, result.otherBound, ActionEnum.HIGHER, false);
+      result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, ActionEnum.HIGHER, false);
       assertEquals(51, result.current);
       assertEquals(49, result.otherBound);
     } catch (Exception ex) {
       fail("exception thrown");
     }
   }
+
 
   // Here, we'll test every possible permutation in the game. The game
   // can start with any number, randomly, between 0 and 20 exclusive, and
@@ -89,7 +90,6 @@ public class GuessTests {
   public void test_every_possibility_1_to_1000() {
     // some temporary variables
     ActionEnum action;  // the action = higher, lower, or yes
-    boolean isFirstPart = true; // if true, double or halve.  otherwise, midpoints
     CalcData result;
 
     // each of the possible first guesses by the computer
@@ -100,26 +100,34 @@ public class GuessTests {
 
         // the user's first action
         action = userAction(userChoice, firstGuess);
-        result = new CalcData(firstGuess, firstGuess, action, isFirstPart);
+        //System.out.printf("for choice of %d, first guess of %d, user's first action is %s%n",userChoice,firstGuess, action);
+        result = new CalcData(firstGuess, firstGuess, action, true);
 
-        // we'll stop running the guessing game at a hundred, to avoid cases
-        // where we would have hit an infinite loop
         int count = 0;
-        while (action != ActionEnum.YES) {
-
+        while (true) {
           try {
-          result = Guess.doCalc(result.current, result.otherBound, action, result.isFirstPart);
+            action = userAction(userChoice, result.current);
+            //System.out.printf("cu: %d, bd: %d, act: %s, fp: %b%n", result.current, result.otherBound, action, isFirstPart);
+            if (action == ActionEnum.YES) {
+              //System.out.println("Action was YES, we're out");
+              break;
+            }
+            result = Guess.doCalc(action, result.current, result.otherBound, result.direction, result.isFirstPart);
           } catch (Exception ex) {
+            System.out.printf("firstGuess: %d, userChoice: %d, count: %d%n", firstGuess, userChoice, count);
             System.out.println(ex);
             break;
           }
-          action = userAction(userChoice, result.current);
           count++;
+          // we'll stop running the guessing game at a hundred, to avoid cases
+          // where we would have hit an infinite loop
           if (count > 100) {
             break;
           }
         }
-        System.out.printf("firstGuess: %d, userChoice: %d, count: %d%n", firstGuess, userChoice, count);
+        if (count > 20) {
+          System.out.printf("firstGuess: %d, userChoice: %d, count: %d%n", firstGuess, userChoice, count);
+        }
 
       }
     }
@@ -140,26 +148,26 @@ public class GuessTests {
 
 
   // what happens if the user says "higher" when we're
-  // guessing 998 and doubling? (Exception should be thrown)
+  // guessing 998 and doubling? (should set to MAX_BOUND)
   @Test
   public void test_higher_at_upper_bound_doubling_above_1000() {
     try {
-      CalcData result = Guess.doCalc(998, 499, ActionEnum.HIGHER, true);
-      fail("no exception thrown when it should have been");
+      CalcData result = Guess.doCalc(ActionEnum.HIGHER, 998, 499, ActionEnum.HIGHER, true);
+      assertEquals(result.current, 1000);
     } catch (Exception ex) {
-      assertEquals("above upper bound", ex.getMessage());
+      fail("should not throw an exception for this case");
     }
   }
 
   // what happens if the user says "higher" when we're
-  // guessing 501 and doubling? (Exception should be thrown)
+  // guessing 501 and doubling? (Should set to MAX_BOUND)
   @Test
   public void test_higher_at_upper_bound_doubling_at_1002() {
     try {
-      CalcData result = Guess.doCalc(501, 250, ActionEnum.HIGHER, true);
-      fail("no exception thrown when it should have been");
+      CalcData result = Guess.doCalc(ActionEnum.HIGHER, 501, 250, ActionEnum.HIGHER, true);
+      assertEquals(result.current, 1000);
     } catch (Exception ex) {
-      assertEquals("above upper bound", ex.getMessage());
+      fail("should not throw an exception for this case");
     }
   }
 
@@ -168,7 +176,8 @@ public class GuessTests {
   @Test
   public void test_higher_at_upper_bound_doubling_at_1000() {
     try {
-      CalcData result = Guess.doCalc(500, 250, ActionEnum.HIGHER, true);
+      CalcData result = Guess.doCalc(ActionEnum.HIGHER, 500, 250, ActionEnum.HIGHER, true);
+      assertEquals(result.current, 1000);
     } catch (Exception ex) {
       fail("should not throw an exception for this case");
     }
@@ -180,10 +189,10 @@ public class GuessTests {
   @Test
   public void test_lower_at_lower_bound_halving_1() {
     try {
-      CalcData result = Guess.doCalc(1, 2, ActionEnum.LOWER, true);
-      fail("no exception thrown when it should have been");
+      CalcData result = Guess.doCalc(ActionEnum.LOWER, 1, 2, ActionEnum.LOWER, true);
+      assertEquals(result.current, 1);
     } catch (Exception ex) {
-      assertEquals("below lower bound", ex.getMessage());
+      fail("should not throw an exception for this case");
     }
   }
 
@@ -192,7 +201,7 @@ public class GuessTests {
   @Test
   public void test_lower_at_lower_bound_halving_2() {
     try {
-      CalcData result = Guess.doCalc(2, 4, ActionEnum.LOWER, true);
+      CalcData result = Guess.doCalc(ActionEnum.LOWER, 2, 4, ActionEnum.LOWER, true);
     } catch (Exception ex) {
       fail("should be no exception this case.");
     }
