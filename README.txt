@@ -20,4 +20,5 @@ to run tests:
   ant test
 
 Note: This program was written using OpenJDK 8, and Ant 1.9.4
-      It was built and tested on FreeBSD 10.2 and Windows 7 and 10
+      It was built and tested on FreeBSD 10.2, and on 
+      Windows 7 and 10 using the MinGW installed with Git.
