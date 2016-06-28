@@ -20,16 +20,58 @@ public class GuessTests {
 			CalcData result = Guess.doCalc(ActionEnum.HIGHER, 2, 2, ActionEnum.HIGHER, true);
 			assertEquals(4, result.current);
 			assertEquals(2, result.otherBound);
-			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, ActionEnum.HIGHER, true);
+			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, result.direction, result.isFirstPart);
 			assertEquals(8, result.current);
 			assertEquals(4, result.otherBound);
-			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, ActionEnum.HIGHER, true);
+			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, result.direction, result.isFirstPart);
 			assertEquals(16, result.current);
 			assertEquals(8, result.otherBound);
 		} catch (Exception ex) {
 			fail("exception thrown");
 		}
 	}
+
+  // what happens when the user hits the top (1000) and says, "higher",
+  // then says lower? they should be able to drop, but a bug I found
+  // showed they stayed at 1000.
+  @Test
+  public void test_coming_off_1000() {
+    try {
+			CalcData result = Guess.doCalc(ActionEnum.HIGHER, 500, 250, ActionEnum.HIGHER, true);
+			assertEquals(1000, result.current);
+			assertEquals(500, result.otherBound);
+			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, result.direction, result.isFirstPart);
+			assertEquals(1000, result.current);
+			assertEquals(500, result.otherBound);
+			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, result.direction, result.isFirstPart);
+			assertEquals(750, result.current);
+			assertEquals(1000, result.otherBound);
+		} catch (Exception ex) {
+			fail("exception thrown");
+    }
+  }
+
+
+  // what happens when the user hits the bottom (1) and says, "lower",
+  // then says higher? they should be able to rise, but a bug I found
+  // showed they stayed at 1.
+  @Test
+  public void test_coming_off_1() {
+    try {
+			CalcData result = Guess.doCalc(ActionEnum.LOWER, 1, 1, ActionEnum.LOWER, true);
+			assertEquals(1, result.current);
+			assertEquals(1, result.otherBound);
+			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, result.direction, result.isFirstPart);
+			assertEquals(1, result.current);
+			assertEquals(1, result.otherBound);
+			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, result.direction, result.isFirstPart);
+			assertEquals(2, result.current);
+			assertEquals(1, result.otherBound);
+		} catch (Exception ex) {
+			fail("exception thrown");
+    }
+  }
+
 
 	// what happens when we start out with a higher number, like 18,
 	// and start out halving each time?
@@ -39,10 +81,10 @@ public class GuessTests {
 			CalcData result = Guess.doCalc(ActionEnum.LOWER, 18, 18, ActionEnum.LOWER, true);
 			assertEquals(9, result.current);
 			assertEquals(18, result.otherBound);
-			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, ActionEnum.LOWER, true);
+			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, result.direction, result.isFirstPart);
 			assertEquals(4, result.current);
 			assertEquals(9, result.otherBound);
-			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, ActionEnum.LOWER, true);
+			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, result.direction, result.isFirstPart);
 			assertEquals(2, result.current);
 			assertEquals(4, result.otherBound);
 		} catch (Exception ex) {
@@ -60,16 +102,16 @@ public class GuessTests {
 			CalcData result = Guess.doCalc(ActionEnum.HIGHER, 30, 15, ActionEnum.HIGHER, true);
 			assertEquals(60, result.current);
 			assertEquals(30, result.otherBound);
-			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, ActionEnum.LOWER, false);
+			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, result.direction, result.isFirstPart);
 			assertEquals(45, result.current);
 			assertEquals(60, result.otherBound);
-			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, ActionEnum.HIGHER, false);
+			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, result.direction, result.isFirstPart);
 			assertEquals(53, result.current);
 			assertEquals(45, result.otherBound);
-			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, ActionEnum.LOWER, false);
+			result = Guess.doCalc(ActionEnum.LOWER, result.current, result.otherBound, result.direction, result.isFirstPart);
 			assertEquals(49, result.current);
 			assertEquals(53, result.otherBound);
-			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, ActionEnum.HIGHER, false);
+			result = Guess.doCalc(ActionEnum.HIGHER, result.current, result.otherBound, result.direction , result.isFirstPart);
 			assertEquals(51, result.current);
 			assertEquals(49, result.otherBound);
 		} catch (Exception ex) {

@@ -113,16 +113,26 @@ public class Guess {
 		// stay true until they switch prevDirection and then never leave false.
 		// And,
 		// vice-versa for starting lower.
+    // 
 		isFirstPart = prevDirection == null ? isFirstPart : recentChoice == prevDirection && isFirstPart;
+
+    // one other thing is this: to prevent getting stuck at 1, we'll always
+    // reset to being in the first part if the user gets to current 1, bound 1.
+    boolean atCurrentOneBoundOne = currentGuess == 1 && otherBound == 1;
+    isFirstPart |= atCurrentOneBoundOne;
 
 		// doubling or halving at this point
 		if (isFirstPart) {
 			if (recentChoice == ActionEnum.HIGHER) {
-				int doubleGuess = (currentGuess * 2) > MAX_BOUND ? MAX_BOUND : currentGuess * 2;
-				return new CalcData(doubleGuess, currentGuess, recentChoice, isFirstPart);
+        boolean isExceedingMax = (currentGuess * 2) > MAX_BOUND;
+				int doubleGuess = isExceedingMax ? MAX_BOUND : currentGuess * 2;
+        int newOtherBound = isExceedingMax ? otherBound : currentGuess;
+				return new CalcData(doubleGuess, newOtherBound, recentChoice, isFirstPart);
 			} else if (recentChoice == ActionEnum.LOWER) {
-				int halveGuess = (currentGuess / 2) <= MIN_BOUND ? 1 : currentGuess / 2;
-				return new CalcData(halveGuess, currentGuess, recentChoice, isFirstPart);
+        boolean isUnderneathMin = (currentGuess / 2) <= MIN_BOUND;
+				int halveGuess = isUnderneathMin ? 1 : currentGuess / 2;
+        int newOtherBound = isUnderneathMin ? otherBound : currentGuess;
+				return new CalcData(halveGuess, newOtherBound, recentChoice, isFirstPart);
 			} else {
 				throw new Exception("error - only option should be higher or lower");
 			}
