@@ -10,8 +10,10 @@ The computer is trying to guess your number.  Each time, you must type
 has guessed the proper number, type "yes" at the prompt, then press
 enter.
 
+(By the way, you can also press "h" for higher, and "l" for lower)
+
 If you wish to end before the computer has guessed your number, type
 "end" at the prompt, then press enter.
 
-If you enter "higher" or "lower" incorrectly, just type "oops" and it
-will give you the previous query.
+If you enter "higher" or "lower" when you meant the opposite, just type "oops"
+and it will give you the previous query.
